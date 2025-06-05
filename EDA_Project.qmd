@@ -6,6 +6,8 @@ format: html
 ```{r}
 library(tidyverse)
 library(kableExtra)
+library(nflverse)
+library(nflreadr)
 ```
 
-> testing codeeeee. Updating this freaking code
+> Testing code
