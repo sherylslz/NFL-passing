@@ -7,3 +7,4 @@ nfl_passes |>
   arrange(play_id)
 
 count(nfl_passes)
+view(nfl_passes)
