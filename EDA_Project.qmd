@@ -1,0 +1,10 @@
+---
+title: "EDA_Project"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(kableExtra)
+```
+
