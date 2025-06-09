@@ -61,11 +61,30 @@ passes <- passes |>
   arrange(desc(completion_percentage))
 
 
-head(passes$passer_player_name, 10)
 
-top_ten <- passes |> 
+top_ten <- head(passes, 10) |> 
   select(passer_player_name, completion_percentage) |>
-  rename("Player Name" = passer_player_name)
+  rename("Player Name" = passer_player_name) 
+  
+
+
+# Making pretty table for top 10 players
+
+top_ten |>
+  kable(booktabs = TRUE,
+        caption = "Caption in progress",
+        col.names = c("Player Nmae", "Completion (%)")) |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+    full_width = FALSE,
+    position = "center"
+  ) |>
+  row_spec(0, bold = TRUE, color = "white", background = "#000080") |>
+  column_spec(2, color = "black", background = "#ffffff") |>
+  add_header_above(c("Top 10 NFL Players with the 
+                     highest Completion Percentage" = 2),
+                   background = "#CD2626", color = "white", bold = TRUE)
+
 
 
 ## Average Time to throw for each player 
