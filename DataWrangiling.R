@@ -85,17 +85,35 @@ top_ten |>
 
 
 ## Average Time to throw for each player 
-avgtime <- nfl_passes |>
+avg_time <- head(nfl_passes, 20) |>
   group_by(passer_player_name) |>
-  summarize(avgtime = mean(time_to_throw)) 
+  summarize(avgtime = mean(time_to_throw, na.rm = TRUE)) 
 
 ## Average yards gained 
-avgyards <- nfl_passes |>
+avg_yards <- nfl_passes |>
 group_by(passer_player_name) |>
-summarize(avg_yards_gained = mean(yards_gained))
+summarize(avg_yards_gained = mean(yards_gained, na.rm = TRUE)) |>
+arrange(desc(avg_yards_gained))
 
+top_20 <- head(avg_yards, 20) |>
+  mutate(avg_yards_gained = round(avg_yards_gained, 2))
 
-##
+# Table displaying top 20 players with the highest yards gained
+
+top_20 |>
+  kable(booktabs = TRUE,
+        caption = "Caption in progress",
+        col.names = c("Player Name", "Yard Gained")) |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+    full_width = FALSE,
+    position = "center"
+  ) |>
+  row_spec(0, bold = TRUE, color = "white", background = "#000080") |>
+  column_spec(2, color = "black", background = "#ffffff") |>
+  add_header_above(c("Top 10 NFL Players with the 
+                     highest Average Yards Gained" = 2),
+                   background = "#CD2626", color = "white", bold = TRUE)
 
   
   
