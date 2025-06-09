@@ -142,13 +142,17 @@ top_20 |>
 
 # General/Joint datasets
 
+ds_1 <- passes |>
+  left_join(avg_time, by = "passer_player_name")
 
+ds_2 <- passes |>
+  left_join(avgyards, by = "passer_player_name")
 
 
 
 # Making a scatter plot to see relationship
 
-ggplot(data = nfl_passes, aes(x = yards_gained, y = )) +
+ggplot(data = ds_1, aes(x = avg_time, y = completion_percentage )) +
   geom_point(color = "blue") +
   labs(
     title = "Completion % vs. Time to Throw",
@@ -157,7 +161,7 @@ ggplot(data = nfl_passes, aes(x = yards_gained, y = )) +
   ) +
   theme_minimal()
 
-ggplot(data = nfl_passes, aes(x = time_to_throw, y = )) +
+ggplot(data = ds_2, aes(x = avg_yards_gained, y = completion_percentage)) +
   geom_point(color = "darkgreen") +
   labs(
     title = "Completion % vs. Yards Gained",
