@@ -138,8 +138,33 @@ top_20 |>
                      highest Average Yards Gained" = 2),
                    background = "#CD2626", color = "white", bold = TRUE)
 
-  
-  
+
+
+# General/Joint datasets
+
+
+
+
+
+# Making a scatter plot to see relationship
+
+ggplot(data = nfl_passes, aes(x = yards_gained, y = )) +
+  geom_point(color = "blue") +
+  labs(
+    title = "Completion % vs. Time to Throw",
+    x = "Average Time to Throw (sec)",
+    y = "Completion Percentage %"
+  ) +
+  theme_minimal()
+
+ggplot(data = nfl_passes, aes(x = time_to_throw, y = )) +
+  geom_point(color = "darkgreen") +
+  labs(
+    title = "Completion % vs. Yards Gained",
+    x = "Average Yards Gained",
+    y = "Completion Percentage %"
+  ) +
+  theme_minimal()
 
 
 
