@@ -65,7 +65,7 @@ head(passes$passer_player_name, 10)
 
 top_ten <- passes |> 
   select(passer_player_name, completion_percentage) |>
-  rename(passer_player_name = "Player Name")
+  rename("Player Name" = passer_player_name)
 
 
 ## Average Time to throw for each player 
@@ -78,7 +78,7 @@ avgtime <- nfl_passes |>
 
 avgyards <- nfl_passes |>
 group_by(passer_player_name) |>
-summarize(avg_yards_gained = mean(yards_gained)
+summarize(avg_yards_gained = mean(yards_gained))
 
 
 ##
