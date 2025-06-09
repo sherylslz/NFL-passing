@@ -85,9 +85,32 @@ top_ten |>
 
 
 ## Average Time to throw for each player 
-avg_time <- head(nfl_passes, 20) |>
+avg_time <- nfl_passes |>
   group_by(passer_player_name) |>
-  summarize(avgtime = mean(time_to_throw, na.rm = TRUE)) 
+  summarize(avg_time = mean(time_to_throw, na.rm = TRUE)) |>
+  arrange(avg_time)
+
+
+top_20_t <- head(avg_time, 20) |>
+  mutate(avg_time = round(avg_time, 2))
+
+
+# Table displaying top 20 players with the lowest time to throw
+
+top_20_t |>
+  kable(booktabs = TRUE,
+        caption = "Caption in progress",
+        col.names = c("Player Name", "Time to Throw (sec)")) |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+    full_width = FALSE,
+    position = "center"
+  ) |>
+  row_spec(0, bold = TRUE, color = "white", background = "#000080") |>
+  column_spec(2, color = "black", background = "#ffffff") |>
+  add_header_above(c("Top 20 NFL Players with the 
+                     lowest time to throw" = 2),
+                   background = "#CD2626", color = "white", bold = TRUE)
 
 ## Average yards gained 
 avg_yards <- nfl_passes |>
@@ -111,7 +134,7 @@ top_20 |>
   ) |>
   row_spec(0, bold = TRUE, color = "white", background = "#000080") |>
   column_spec(2, color = "black", background = "#ffffff") |>
-  add_header_above(c("Top 10 NFL Players with the 
+  add_header_above(c("Top 20 NFL Players with the 
                      highest Average Yards Gained" = 2),
                    background = "#CD2626", color = "white", bold = TRUE)
 
