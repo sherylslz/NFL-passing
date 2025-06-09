@@ -53,15 +53,13 @@ passes |>
 
 summary(passes$total_passes)
 
-# Top 10 players with the highest completion rate in terms of passes
-
 passes <- passes |>
   filter(total_passes >= 100) |>
   mutate(completion_percentage = completed_passes/ total_passes) |>
   arrange(desc(completion_percentage))
 
 
-
+# Top 10 players with the highest completion rate in terms of passes
 top_ten <- head(passes, 10) |> 
   select(passer_player_name, completion_percentage) |>
   rename("Player Name" = passer_player_name) 
@@ -69,7 +67,6 @@ top_ten <- head(passes, 10) |>
 
 
 # Making pretty table for top 10 players
-
 top_ten |>
   kable(booktabs = TRUE,
         caption = "Caption in progress",
@@ -88,13 +85,11 @@ top_ten |>
 
 
 ## Average Time to throw for each player 
-
 avgtime <- nfl_passes |>
   group_by(passer_player_name) |>
   summarize(avgtime = mean(time_to_throw)) 
 
 ## Average yards gained 
-
 avgyards <- nfl_passes |>
 group_by(passer_player_name) |>
 summarize(avg_yards_gained = mean(yards_gained))

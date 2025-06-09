@@ -12,3 +12,15 @@ library(nflreadr)
 
 > Testing code
 
+- Two data visualizations exploring the questions—both must be multivariate 
+(i.e., involving 2+ variables) and in different formats
+
+
+
+- One clustering analysis
+
+
+
+- Conclusions for the hypotheses based on your EDA and data visualizations
+
+
