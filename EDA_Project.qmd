@@ -46,26 +46,17 @@ ggplot(model_1, aes(x = avg_time, y = completion_percentage)) +
 
 - Question #2: logistics regression
 
-```{r}
-model_2 <- glm(completion ~ offense_formation + routes_ran, 
-             data = ds_2, family = binomial)
-msummary(model_2)
-```
-
 ### Checking for Model Conditions:
 
-They are all categorical 
+They are all categorical so the linearity condition is automatically met.
 
-### Checking model significance
-
-
-## Checking for Model significance
+### Checking for Model significance
 **Model: Multiple Logistic Regression with all Predictor Variables**
 
-```{r, include= FALSE, echo=FALSE}
-model_2 <- glm(completion ~ offense_formation + routes_ran, data = ds_2, 
+```{r}
+model_2 <- glm(complete_pass ~ offense_formation + route_ran, data = nfl_passes, 
              family = binomial)
-msummary(model)
+msummary(model_2)
 ```
 
 
