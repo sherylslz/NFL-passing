@@ -145,12 +145,37 @@ table(nfl_passes3$complete_pass)
 predicted_Classes <- predict(model_3, newdata = nfl_passes3,type = "response") >= 0.5
 actual_Classes <- nfl_passes3$complete_pass
 
+
+confusionMatrix(factor(predicted_Classes), factor(actual_Classes), positive = "TRUE")
+
 # Ensure both are factors with the same levels
 predicted_Classes <- factor(predicted_Classes, levels = c(FALSE,TRUE))
 actual_Classes <- factor(actual_Classes, levels = c(FALSE, TRUE))
 
 # confusion matrix
 confusionMatrix(factor(predicted_Classes), factor(actual_Classes), positive = "TRUE")
+
+
+
+pred <- predict(model_3, newdata = nfl_passes3)
+pred_y <- as.numeric(pred > 0)
+true_y <- as.numeric(nfl_passes3$complete_pass == 1)
+true_pos <- (true_y == 1) & (pred_y == 1)
+true_neg <- (true_y == 0) & (pred_y == 0)
+false_pos <- (true_y == 0) & (pred_y == 1)
+false_neg <- (true_y == 1) & (pred_y ==0)
+conf_mat <- matrix(c(sum(true_pos), sum(false_pos),
+                     sum(false_neg), sum(true_neg)), 2, 2)
+
+colnames(conf_mat) <- c(TRUE, FALSE)
+rownames(conf_mat) <- c(TRUE, FALSE)
+conf_mat
+(conf_mat[1,1]+conf_mat[2,2])/(conf_mat[1,1]+conf_mat[2,2]+conf_mat[1,2]+conf_mat[2,1]) #accuracy
+(conf_mat[1,1])/(conf_mat[1,1]+conf_mat[2,1])
+(conf_mat[2,2])/(conf_mat[2,2]+conf_mat[1,2])
+
+nfl_passes3 %>% count(complete_pass)
+5463/(2687+5463)
 ```
 
 
