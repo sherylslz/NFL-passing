@@ -59,6 +59,11 @@ passes <- passes |>
   arrange(desc(completion_percentage))
 
 
+passes_2 <- nfl_passes |>
+  mutate(completion_percentage = completed_passes/ total_passes) |>
+  arrange(desc(completion_percentage))
+
+
 # Top 10 players with the highest completion rate in terms of passes
 top_ten <- head(passes, 10) |> 
   select(passer_player_name, completion_percentage) |>
@@ -81,6 +86,10 @@ top_ten |>
   add_header_above(c("Top 10 NFL Players with the 
                      highest Completion Percentage" = 2),
                    background = "#CD2626", color = "white", bold = TRUE)
+
+
+## Average QB touchdowns  
+
 
 
 
@@ -169,6 +178,14 @@ ggplot(data = ds_2, aes(x = avg_yards_gained, y = completion_percentage)) +
     y = "Completion Percentage %"
   ) +
   theme_minimal()
+
+
+
+
+
+
+
+
 
 
 

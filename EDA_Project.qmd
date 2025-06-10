@@ -13,13 +13,41 @@ library(nflreadr)
 # data set
 nfl_passes <- read_csv("https://raw.githubusercontent.com/36-SURE/2025/main/data/nfl_passes.csv")
 ```
+- Question #1: Completion % and average time to throw with SLR or t-test
+
+```{r}
+model_1 <- lm(completion_percentage ~ avg_time, data = ds_1)
+summary(model_1)
+
+```
+### Interpreting the coefficients
+
+> P-value is not significant
+
+
+```{r}
+
+ggplot(model_1, aes(x = avg_time, y = completion_percentage)) +
+  geom_point(color = "steelblue", size = 3) +
+  geom_smooth(method = "lm", se = TRUE, color = "red") +
+  labs(
+    title = "Completion Percentage vs. Average Time to Throw",
+    x = "Average Time to Throw (seconds)",
+    y = "Completion Percentage (%)"
+  ) +
+  theme_minimal()
+
+```
+
+### Check Assumptions:
 
 
 
 
+- Question #2: logistics regression
 
 
-> Testing code
+
 
 - Two data visualizations exploring the questions—both must be multivariate 
 (i.e., involving 2+ variables) and in different formats
