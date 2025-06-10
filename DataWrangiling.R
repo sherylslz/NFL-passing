@@ -23,11 +23,100 @@ nfl2 <- nfl_passes |>
   group_by(passer_player_name) |>
   summarize(total_pass = sum(complete_pass))
 
-passes <- nfl_passes |>
+#passes
+passes1 <- nfl_passes |>
   count(passer_player_name)
 
 names(passes)[names(passes) == "n"] <- "total_passes"
 passes$completed_passes <- nfl2$total_pass
+
+passes <- passes |>
+  filter(total_passes >= 100) |>
+  mutate(completion_percentage = completed_passes/ total_passes) |>
+  arrange(desc(completion_percentage))
+
+
+#################
+nfl3 <- nfl_passes |>
+  select(target_player_name, complete_pass) |>
+  group_by(target_player_name) |>
+  summarize(total_pass = sum(complete_pass))
+
+receiver_target <- nfl_passes |>
+  count(target_player_name)
+
+names(receiver_target)[names(receiver_target) == "n"] <- "total_passes"
+receiver_target$completed_passes <- nfl3$total_pass
+
+Targets_total <- receiver_target |>
+  filter(total_passes) |>
+  mutate(completion_percentage = completed_passes/ total_passes)
+
+Targets <- receiver_target |>
+  filter(total_passes >= 20) |>
+  mutate(completion_percentage = completed_passes/ total_passes)
+
+Top_targets <- Targets |>
+  filter(total_passes >= 10) |>
+  mutate(completion_percentage = completed_passes/ total_passes)
+
+
+Top_targets <- Targets |> 
+  select(target_player_name, completion_percentage,total_passes,completed_passes) |>
+  rename('Player Name' = target_player_name) |>
+  arrange(desc(total_passes))
+
+Top_received = head(Top_targets, 10)
+
+
+#######################Combos
+
+
+nfl4 <- nfl_passes |>
+  select(target_player_name, passer_player_name, complete_pass) |>
+  group_by(passer_player_name,target_player_name) |>
+  count(passer_player_name,target_player_name)
+
+nfl5 <- nfl_passes |>
+  filter(complete_pass == "1") |>
+  select(target_player_name, passer_player_name, complete_pass) |>
+  group_by(passer_player_name,target_player_name) |>
+  count(passer_player_name,target_player_name)
+
+nfl6 <- left_join(nfl4, nfl5, by = join_by(passer_player_name, target_player_name)) |>
+  mutate(n.y = if_else(is.na(n.y), 0, n.y))
+
+nfl8 <- nfl_passes |>
+  filter(complete_pass == "1") |>
+  select(target_player_name, passer_player_name, complete_pass, touchdown) |>
+  group_by(passer_player_name,target_player_name) |>
+  count(passer_player_name,target_player_name)
+
+Combos_total <- nfl6 |>
+  filter(n.x >= 10) |>
+  mutate(completion_percentage = n.y/ n.x)
+###########################################
+
+names(receiver_target)[names(receiver_target) == "n"] <- "total_passes"
+
+nfl7 <- (nfl5$n/nfl4$n)
+view(nfl7)
+summarize(total_pass = sum(complete_pass))
+
+Combos <- nfl_passes |>
+  group_by(passer_player_name,target_player_name) |>
+  count(passer_player_name,target_player_name)
+
+  
+names(Combos)[names(Combos) == "n"] <- "total_passes"
+Combos$completed_passes <- nfl4$total_passes
+
+
+Combos_totals <- Combos |>
+  filter(total_passes) |>
+  mutate(completion_percentage = completed_passes/ total_passes)
+
+############################
 
 
 nfl1 <- nfl_passes |>
@@ -53,18 +142,29 @@ passes |>
 
 summary(passes$total_passes)
 
-passes <- passes |>
-  filter(total_passes >= 100) |>
-  mutate(completion_percentage = completed_passes/ total_passes) |>
-  arrange(desc(completion_percentage))
 
 
+#<<<<<<< Updated upstream
 # Top 10 players with the highest completion rate in terms of passes
 top_ten <- head(passes, 10) |> 
   select(passer_player_name, completion_percentage) |>
   rename("Player Name" = passer_player_name) 
+#=======
+df = head(passes$passer_player_name, 10)
+
+top_ten <- passes |> 
+  select(passer_player_name, completion_percentage) |>
+  rename('Player Name' = passer_player_name)
+#>>>>>>> Stashed changes
   
 
+df = head(top_ten, 10)
+
+
+avgtime <- nfl_passes |>
+  
+  group_by(passer_player_name) |>
+  summarize(avgtime = mean(time_to_throw))
 
 # Making pretty table for top 10 players
 top_ten |>
@@ -114,7 +214,7 @@ top_20_t |>
 
 ## Average yards gained 
 avg_yards <- nfl_passes |>
-group_by(passer_player_name) |>
+group_by(target_player_name) |>
 summarize(avg_yards_gained = mean(yards_gained, na.rm = TRUE)) |>
 arrange(desc(avg_yards_gained))
 
@@ -167,5 +267,30 @@ ggplot(data = nfl_passes, aes(x = time_to_throw, y = )) +
   theme_minimal()
 
 
+install.packages("sportyR")
+library(sportyR)
+library(ggplot2)
+completed_pass <- nfl_passes[which(nfl_passes$complete_pass == 1 & nfl_passes$passer_player_name=="L.Jackson"),]
+completed_pass$target_x <- completed_pass$target_x-60
+completed_pass$target_y <- completed_pass$target_y- (53.3/2)
 
+intercepted_pass <- nfl_passes[which(nfl_passes$interception == 1 & nfl_passes$passer_player_name=="L.Jackson"),]
+intercepted_pass$target_x <- intercepted_pass$target_x-60
+intercepted_pass$target_y <- intercepted_pass$target_y- (53.3/2)
+
+
+geom_football("nfl",display_range="in_bounds_only") +
+  geom_point(data=completed_pass,x=completed_pass$target_x,y=completed_pass$target_y, colour = "blue")+
+  geom_point(data=intercepted_pass,x=intercepted_pass$target_x,y=intercepted_pass$target_y,colour = "red")
+
+
+
+
+library(ggplot2)
+nfl_passes |> 
+  ggplot(aes(x = complete_pass, y = yards_gained)) +
+  geom_point(color = "darkred", size = 4, alpha = 0.5) +
+  geom_smooth(method = "lm", linewidth = 2)
+
+# Are players who throw more quickly more efficient and accurate which results in higher completion percentages and yards gained? 
 
