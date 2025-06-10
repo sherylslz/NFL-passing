@@ -165,7 +165,7 @@ confusionMatrix(factor(predicted_Classes), factor(actual_Classes), positive = "T
 
 - One clustering analysis
 
-
+> maybe let's combine/compare this with top 10 players from the table
 
 - Conclusions for the hypotheses based on your EDA and data visualizations
 
