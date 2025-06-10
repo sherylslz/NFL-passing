@@ -9,17 +9,179 @@ library(tidyverse)
 library(kableExtra)
 library(nflverse)
 library(nflreadr)
-
+library(caret)
 # data set
 nfl_passes <- read_csv("https://raw.githubusercontent.com/36-SURE/2025/main/data/nfl_passes.csv")
+```
+- Question #1: Completion % and average time to throw with SLR or t-test
+
+```{r}
+model_1 <- lm(completion_percentage ~ avg_time, data = ds_1)
+summary(model_1)
+```
+### Interpreting the coefficients
+
+> P-value is not significant
+
+
+```{r}
+
+ggplot(model_1, aes(x = avg_time, y = completion_percentage)) +
+  geom_point(color = "steelblue", size = 3) +
+  geom_smooth(method = "lm", se = TRUE, color = "red") +
+  labs(
+    title = "Completion Percentage vs. Average Time to Throw",
+    x = "Average Time to Throw (seconds)",
+    y = "Completion Percentage (%)"
+  ) +
+  theme_minimal()
+
+```
+
+### Check Assumptions:
+
+> 
+
+
+- Question #2: logistic regression
+
+
+```{r}
+nfl_passes2 <- nfl_passes |>
+  select(complete_pass, 
+         route_ran,
+         offense_formation) |>
+  # convert categorical variables to factors
+  mutate(across(
+    c(complete_pass,
+    route_ran,
+    offense_formation),
+    as.factor
+  )) |>
+  # remove missing values
+  drop_na()
+```
+
+
+### Checking for Model Conditions:
+
+They are all categorical so the linearity condition is automatically met.
+
+
+## First Model (Version 1): Predicting if Pass was Completed
+
+
+### Checking for Model significance
+
+**Model: Multiple Logistic Regression with all Predictor Variables**
+
+```{r}
+model_2 <- glm(complete_pass ~ offense_formation + route_ran, data = nfl_passes2, 
+             family = binomial)
+msummary(model_2)
+```
+### Count Distributions for our Predictors (in case of class imbalances)
+
+```{r}
+# get counts for simplification 
+table(nfl_passes2$route_ran)
+table(nfl_passes2$offense_formation)
+```
+### Grouping Predictors
+
+- The code below generates our newly grouped predictors. Here is how we reorganized each variable:
+
+```{r}
+# grouping routes ran based on general characteristics
+nfl_passes3 <- nfl_passes2 |>
+  mutate(route_type = case_when(
+    route_ran %in% c("SLANT", "FLAT", "SCREEN", "HITCH") ~ "Short",
+    route_ran %in% c("IN", "OUT", "CROSS") ~ "Intermediate",
+    route_ran %in% c("GO", "POST", "CORNER", "WHEEL") ~ "Deep",
+    TRUE ~ "Other"
+  ))
+
+nfl_passes3 <- nfl_passes3 |>
+ filter(offense_formation %in% c("SHOTGUN", "EMPTY", "SINGLEBACK", "I_FORM")) |>
+  rename("formation_type" = offense_formation)
+
+# dropped the category WILDCAT, JUMBO and PISTOL (maybe combine PISTOL and JUMBO??)
+nfl_passes3 <- nfl_passes3 |>
+  mutate(across(c(route_type, formation_type), factor))
+
+## Getting the counts again
+table(nfl_passes3$route_type)
+table(nfl_passes3$formation_type)
+```
+
+
+## First Model (Version 2): Predicting whether the pass was completed or not
+
+With our predictors now grouped into simpler, more balanced categories, we re-ran the logistic regression to predict whether the pass was completed or not.
+
+
+```{r}
+model_3 <- glm(complete_pass ~ formation_type + route_type+0, data = nfl_passes3, 
+             family = binomial)
+msummary(model_3)
+```
+
+## Confusion Matrix
+
+- To evaluate performance, we will use a confusion matrix.
+
+```{r}
+prediction <- predict(model_3,newdata=nfl_passes3,type="response") 
+caret::confusionMatrix(data=as.numeric(prediction >0.5),reference=nfl_passes3$complete_pass)
+```
+
+
+```{r}
+# checking the levels of complete_pass
+table(nfl_passes3$complete_pass)
+
+
+# predict probabilities and classify
+predicted_Classes <- predict(model_3, newdata = nfl_passes3,type = "response") >= 0.5
+actual_Classes <- nfl_passes3$complete_pass
+
+
+confusionMatrix(factor(predicted_Classes), factor(actual_Classes), positive = "TRUE")
+
+# Ensure both are factors with the same levels
+predicted_Classes <- factor(predicted_Classes, levels = c(FALSE,TRUE))
+actual_Classes <- factor(actual_Classes, levels = c(FALSE, TRUE))
+
+# confusion matrix
+confusionMatrix(factor(predicted_Classes), factor(actual_Classes), positive = "TRUE")
+
+
+
+pred <- predict(model_3, newdata = nfl_passes3)
+pred_y <- as.numeric(pred > 0)
+true_y <- as.numeric(nfl_passes3$complete_pass == 1)
+true_pos <- (true_y == 1) & (pred_y == 1)
+true_neg <- (true_y == 0) & (pred_y == 0)
+false_pos <- (true_y == 0) & (pred_y == 1)
+false_neg <- (true_y == 1) & (pred_y ==0)
+conf_mat <- matrix(c(sum(true_pos), sum(false_pos),
+                     sum(false_neg), sum(true_neg)), 2, 2)
+
+colnames(conf_mat) <- c(TRUE, FALSE)
+rownames(conf_mat) <- c(TRUE, FALSE)
+conf_mat
+(conf_mat[1,1]+conf_mat[2,2])/(conf_mat[1,1]+conf_mat[2,2]+conf_mat[1,2]+conf_mat[2,1]) #accuracy
+(conf_mat[1,1])/(conf_mat[1,1]+conf_mat[2,1])
+(conf_mat[2,2])/(conf_mat[2,2]+conf_mat[1,2])
+
+nfl_passes3 %>% count(complete_pass)
+5463/(2687+5463)
 ```
 
 
 
 
 
-
-> Testing code
 
 - Two data visualizations exploring the questions—both must be multivariate 
 (i.e., involving 2+ variables) and in different formats
@@ -28,7 +190,7 @@ nfl_passes <- read_csv("https://raw.githubusercontent.com/36-SURE/2025/main/data
 
 - One clustering analysis
 
-
+> maybe let's combine/compare this with top 10 players from the table
 
 - Conclusions for the hypotheses based on your EDA and data visualizations
 
