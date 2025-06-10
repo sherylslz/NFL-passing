@@ -9,7 +9,7 @@ library(tidyverse)
 library(kableExtra)
 library(nflverse)
 library(nflreadr)
-
+library(caret)
 # data set
 nfl_passes <- read_csv("https://raw.githubusercontent.com/36-SURE/2025/main/data/nfl_passes.csv")
 ```
@@ -131,7 +131,20 @@ msummary(model_3)
 - To evaluate performance, we will use a confusion matrix.
 
 ```{r}
+# checking the levels of complete_pass
+table(nfl_passes3$complete_pass)
 
+
+# predict probabilities and classify
+predicted_Classes <- predict(model_3, type = "response") >= 0.5
+actual_Classes <- nfl_passes3$complete_pass
+
+# Ensure both are factors with the same levels
+predicted_Classes <- factor(predicted_Classes, levels = c(FALSE, TRUE))
+actual_Classes <- factor(actual_Classes, levels = c(FALSE, TRUE))
+
+# confusion matrix
+confusionMatrix(factor(predicted_Classes), factor(actual_Classes), positive = "TRUE")
 ```
 
 
