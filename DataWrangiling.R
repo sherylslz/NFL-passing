@@ -125,10 +125,29 @@ top_20_t |>
 avg_yards <- nfl_passes |>
 group_by(passer_player_name) |>
 summarize(avg_yards_gained = mean(yards_gained, na.rm = TRUE)) |>
-arrange(desc(avg_yards_gained))
+arrange(desc(avg_yards_gained)) 
 
 top_20 <- head(avg_yards, 20) |>
   mutate(avg_yards_gained = round(avg_yards_gained, 2))
+
+## TD/attempt player data 
+
+td_per_attempt <- nfl_passes |> 
+group_by(passer_player_name) |> 
+summarize(td_per_attempt = mean(touchdown, na.rm = TRUE)) 
+arrange(desc("td_per_attempt"))  
+
+
+##TD per attempt Histogram 
+td_per_attempt |> 
+  ggplot(aes(td_per_attempt))
+  geom_histogram()
+  
+  
+##
+ 
+
+
 
 # Table displaying top 20 players with the highest yards gained
 
@@ -157,10 +176,14 @@ ds_1 <- passes |>
 ds_2 <- passes |>
   left_join(avgyards, by = "passer_player_name")
 
+ds_3 <- ds_2 |> 
+left_join(td_per_attempt, by = "passer_player_name")
+
 
 
 # Making a scatter plot to see relationship
 
+#Average time to throw on completion percentgage
 ggplot(data = ds_1, aes(x = avg_time, y = completion_percentage )) +
   geom_point(color = "blue") +
   labs(
@@ -170,6 +193,7 @@ ggplot(data = ds_1, aes(x = avg_time, y = completion_percentage )) +
   ) +
   theme_minimal()
 
+#Completion Percentage by Average yards gained
 ggplot(data = ds_2, aes(x = avg_yards_gained, y = completion_percentage)) +
   geom_point(color = "darkgreen") +
   labs(
@@ -178,6 +202,36 @@ ggplot(data = ds_2, aes(x = avg_yards_gained, y = completion_percentage)) +
     y = "Completion Percentage %"
   ) +
   theme_minimal()
+
+
+
+
+#Completion percentage by Touch down per attempt 
+ggplot(data = ds_3, aes(x = td_per_attempt , y = completion_percentage)) +
+  geom_point(color = "darkgreen") +
+  labs(
+    title = "Completion % vs. td_per_attempt ",
+    x = "Touch Down Per Attempt ",
+    y = "Completion Percentage %") 
+     theme_minimal()
+     
+#Average Yards gained by touch down per attempt 
+     ggplot(data = ds_3, aes(x = td_per_attempt , y = avg_yards)) +
+       geom_point(color = "darkgreen") +
+       labs(
+         title = "Completion % vs. td_per_attempt ",
+         x = "Touch Down Per Attempt ",
+         y = "Avg Yards Gained") 
+     theme_minimal()
+     
+     
+
+     
+     
+
+
+
+
 
 
 
