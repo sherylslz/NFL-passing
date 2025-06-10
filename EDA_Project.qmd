@@ -140,7 +140,7 @@ caret::confusionMatrix(data=as.numeric(prediction >0.5),reference=nfl_passes3$co
 # checking the levels of complete_pass
 table(nfl_passes3$complete_pass)
 
-# THERE IS SOMETHING WRONG WITH THIS MATRIX
+# THERE IS SOMETHING WRONG WITH THIS MATRIX-------------------------------------
 
 # predict probabilities and classify
 predicted_Classes <- predict(model_3, newdata = nfl_passes3,type = "response") >= 0.5
@@ -158,7 +158,7 @@ confusionMatrix(factor(predicted_Classes), factor(actual_Classes), positive = "T
 
 
 
-#THIS (MANUAL) MATRIX WORKS
+#THIS (MANUAL) MATRIX WORKS-----------------------------------------------------
 
 pred <- predict(model_3, newdata = nfl_passes3)
 pred_y <- as.numeric(pred > 0)
@@ -178,7 +178,7 @@ conf_mat
 (conf_mat[2,2])/(conf_mat[2,2]+conf_mat[1,2]) # checking sensitivity
 
 nfl_passes3 %>% count(complete_pass)
-5463/(2687+5463)
+5463/(2687+5463) #
 ```
 
 
