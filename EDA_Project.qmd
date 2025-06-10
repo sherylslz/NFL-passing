@@ -18,7 +18,6 @@ nfl_passes <- read_csv("https://raw.githubusercontent.com/36-SURE/2025/main/data
 ```{r}
 model_1 <- lm(completion_percentage ~ avg_time, data = ds_1)
 summary(model_1)
-
 ```
 ### Interpreting the coefficients
 
@@ -41,23 +40,102 @@ ggplot(model_1, aes(x = avg_time, y = completion_percentage)) +
 
 ### Check Assumptions:
 
-
+> 
 
 
 - Question #2: logistics regression
+
+
+```{r}
+nfl_passes2 <- nfl_passes |>
+  select(complete_pass, 
+         route_ran,
+         offense_formation) |>
+  # convert categorical variables to factors
+  mutate(across(
+    c(complete_pass,
+    route_ran,
+    offense_formation),
+    as.factor
+  )) |>
+  # remove missing values
+  drop_na()
+```
+
 
 ### Checking for Model Conditions:
 
 They are all categorical so the linearity condition is automatically met.
 
+
+## First Model (Version 1): Predicting if Pass was Completed
+
+
 ### Checking for Model significance
+
 **Model: Multiple Logistic Regression with all Predictor Variables**
 
 ```{r}
-model_2 <- glm(complete_pass ~ offense_formation + route_ran, data = nfl_passes, 
+model_2 <- glm(complete_pass ~ offense_formation + route_ran, data = nfl_passes2, 
              family = binomial)
 msummary(model_2)
 ```
+### Count Distributions for our Predictors (in case of class imbalances)
+
+```{r}
+# get counts for simplification 
+table(nfl_passes2$route_ran)
+table(nfl_passes2$offense_formation)
+```
+### Grouping Predictors
+
+- The code below generates our newly grouped predictors. Here is how we reorganized each variable:
+
+```{r}
+# grouping routes ran based on general characteristics
+nfl_passes3 <- nfl_passes2 |>
+  mutate(route_type = case_when(
+    route_ran %in% c("SLANT", "FLAT", "SCREEN", "HITCH") ~ "Short",
+    route_ran %in% c("IN", "OUT", "CROSS") ~ "Intermediate",
+    route_ran %in% c("GO", "POST", "CORNER", "WHEEL") ~ "Deep",
+    TRUE ~ "Other"
+  ))
+
+nfl_passes3 <- nfl_passes3 |>
+ filter(offense_formation %in% c("SHOTGUN", "EMPTY", "SINGLEBACK", "I_FORM")) |>
+  rename("formation_type" = offense_formation)
+
+# dropped the category WILDCAT, JUMBO and PISTOL (maybe combine PISTOL and JUMBO??)
+nfl_passes3 <- nfl_passes3 |>
+  mutate(across(c(route_type, formation_type), factor))
+
+## Getting the counts again
+table(nfl_passes3$route_type)
+table(nfl_passes3$formation_type)
+```
+
+
+## First Model (Version 2): Predicting whether the pass was completed or not
+
+With our predictors now grouped into simpler, more balanced categories, we re-ran the logistic regression to predict whether the pass was completed or not.
+
+
+```{r}
+model_3 <- glm(complete_pass ~ formation_type + route_type, data = nfl_passes3, 
+             family = binomial)
+msummary(model_3)
+```
+
+## Confusion Matrix
+
+- To evaluate performance, we will use a confusion matrix.
+
+```{r}
+
+```
+
+
+
 
 
 
