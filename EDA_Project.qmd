@@ -125,13 +125,18 @@ model_3 <- glm(complete_pass ~ formation_type + route_type, data = nfl_passes3,
              family = binomial)
 msummary(model_3)
 
-# log of odds
-# odds of completing over the odds of completing with deep formation 
 
-exp(1.43257) # exponentiating the log of odds
+exp(1.43257) # exponentiation the log of odds
 
 
 ```
+
+### Final Model Interpretation
+
+$$logit(\widehat{\pi}) = - 0.39877 + 0.14419 (formation_typeI_FORM) + 
+0.02726(formation_typeSHOTGUN) + 0.29915(formation_typeSINGLEBACK) + 
+0.99247(route_typeIntermediate) + 1.43257(route_typeOther) + 1.55478(route_typeShort) $$ 
+
 
 ## Confusion Matrix
 
