@@ -261,15 +261,54 @@ ggplot(data = ds_3, aes(x = td_per_attempt , y = completion_percentage)) +
 inter_ds <- nfl_passes |>
   dplyr::select(interception, passer_player_name) |>
   group_by(passer_player_name) |>
-  summarize(interception_total = sum(interception))
+  summarize(interception_total = mean(interception))
 
 
 
+# ======================= [ CLUSTERING ] =======================================
 
+## not the bets metric to judge the quality of a player
+
+clust_nfl <- ds_6 |> 
+  dplyr::select(completion_percentage, avg_yards_gained, td_per_attempt) |> 
+  kmeans(algorithm = "Lloyd", centers = 4, nstart = 1)
+
+ds_6 |>
+  mutate(
+    player_clusters = as.factor(clust_nfl$cluster)
+  ) |>
+  ggplot(aes(x = avg_yards_gained, y = completion_percentage,
+             color = player_clusters, shape = player_clusters)) +
+  geom_point(size = 5, alpha = 1) + 
+  ggthemes::scale_color_colorblind() +
+  theme(legend.position = "bottom") 
      
-     
 
 
+
+
+# ======================= [ SCALING ] =======================================
+
+ds_6 <- ds_6 |>
+  dplyr::mutate(
+    std_completion_percentage = as.numeric(scale(completion_percentage, center = TRUE, scale = TRUE)),
+    std_avg_yards_gained = as.numeric(scale(avg_yards_gained, center = TRUE, scale = TRUE))
+  )
+
+std_kmeans_cp <- ds_6 |> 
+  dplyr::select(std_completion_percentage, std_avg_yards_gained) |> 
+  kmeans(algorithm = "Lloyd", centers = 4, nstart = 1)
+
+ds_6 |>
+  mutate(
+    player_clusters = as.factor(std_kmeans_cp$cluster)
+  ) |>
+  ggplot(aes(x = std_avg_yards_gained, y = std_completion_percentage,
+             color = player_clusters)) +
+  geom_point(size = 5, alpha = 1) + 
+  ggthemes::scale_color_colorblind() +
+  theme(legend.position = "bottom") +
+  coord_fixed()
 
 
 
