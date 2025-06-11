@@ -128,7 +128,7 @@ msummary(model_3)
 # log of odds
 # odds of completing over the odds of completing with deep formation 
 
-exp(1.43257)
+exp(1.43257) # exponentiating the log of odds
 
 
 ```
