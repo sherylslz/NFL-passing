@@ -179,6 +179,12 @@ ds_2 <- passes |>
 ds_3 <- ds_2 |> 
 left_join(td_per_attempt, by = "passer_player_name")
 
+ds_4 <- ds_1 |> 
+left_join(td_per_attempt, by = "passer_player_name")  
+
+ds_5 <- ds_1 |> 
+  left_join(avg_yards, by = "passer_player_name")
+
 
 
 # Making a scatter plot to see relationship
@@ -216,13 +222,36 @@ ggplot(data = ds_3, aes(x = td_per_attempt , y = completion_percentage)) +
      theme_minimal()
      
 #Average Yards gained by touch down per attempt 
-     ggplot(data = ds_3, aes(x = td_per_attempt , y = avg_yards)) +
+     ggplot(data = ds_3, aes(x = avg_yards_gained  , y = td_per_attempt ))+
        geom_point(color = "darkgreen") +
        labs(
-         title = "Completion % vs. td_per_attempt ",
-         x = "Touch Down Per Attempt ",
-         y = "Avg Yards Gained") 
+         title = "Avg Yards Gained vs. td_per_attempt ",
+         x = "Avg Yards Gained" ,
+         y = "Touch Down Per Attempt") 
      theme_minimal()
+     
+## Time to throw by touch down per attempt 
+     ggplot(data = ds_4, aes(x = avg_time , y = td_per_attempt ))+
+       geom_point(color = "darkgreen") +
+       labs(
+         title = "avg_time vs. td_per_attempt ",
+         x = "avg_time" ,
+         y = "Touch Down Per Attempt") 
+     theme_minimal()
+     
+## Time to throw by Average Yards gained 
+     
+     ggplot(data = ds_5, aes(x = avg_time , y = avg_yards_gained ))+
+       geom_point(color = "darkgreen") +
+       labs(
+         title = "avg_time vs. avg_yards_gained ",
+         x = "avg_time" ,
+         y = "avg_yards_gained") 
+     theme_minimal()
+     
+
+     
+
      
      
 
