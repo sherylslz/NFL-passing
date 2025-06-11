@@ -1,5 +1,6 @@
 library(tidyverse)
 library(kableExtra)
+library(factoextra)
 
 
 
@@ -312,14 +313,29 @@ ds_6 |>
 
 
 
+# ======================= [ SCALING ] ==========================================
 
 
+ds_features <- ds_6 |>
+  mutate(log_completion = log(completion_percentage)) |> 
+  dplyr::select(avg_yards_gained, log_completion, td_per_attempt, interception_total) |> 
+  drop_na() 
 
 
+std_ds_features <- ds_features |> 
+  scale(center = TRUE, scale = TRUE)
 
 
+kmeans_ds_features <- std_ds_features |> 
+  kmeans(algorithm = "Hartigan-Wong", centers = 4, nstart = 30) 
 
 
-
-
+kmeans_ds_features |> 
+  # need to pass in data used for clustering
+  fviz_cluster(data = std_ds_features,
+               geom = "point",
+               ellipse = FALSE) +
+  ggthemes::scale_color_colorblind() + 
+    geom_point(size = 5, alpha = 1) + 
+  theme_light()
 
