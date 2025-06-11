@@ -185,6 +185,9 @@ left_join(td_per_attempt, by = "passer_player_name")
 ds_5 <- ds_1 |> 
   left_join(avg_yards, by = "passer_player_name")
 
+ds_6 <- ds_3 |>
+  left_join(inter_ds, ds_3, by = "passer_player_name")
+
 
 
 # Making a scatter plot to see relationship
@@ -208,7 +211,6 @@ ggplot(data = ds_2, aes(x = avg_yards_gained, y = completion_percentage)) +
     y = "Completion Percentage %"
   ) +
   theme_minimal()
-
 
 
 
@@ -253,7 +255,16 @@ ggplot(data = ds_3, aes(x = td_per_attempt , y = completion_percentage)) +
      
 
      
+    # interception
      
+
+inter_ds <- nfl_passes |>
+  dplyr::select(interception, passer_player_name) |>
+  group_by(passer_player_name) |>
+  summarize(interception_total = sum(interception))
+
+
+
 
      
      
