@@ -197,6 +197,7 @@ top_ten |>
 
 
 #==Average Time to throw for each player========================================
+
 avg_time <- nfl_passes |>
   group_by(passer_player_name) |>
   summarize(avg_time = mean(time_to_throw, na.rm = TRUE)) |>
@@ -255,8 +256,9 @@ top_20 |>
 
 #================Making a scatter plot to see relationship======================
 
-ggplot(data = nfl_passes, aes(x = yards_gained, y = )) +
+ggplot(data = ds_2, aes(x = avg_yards_gained, y = completion_percentage)) +
   geom_point(color = "blue") +
+  geom_smooth(method = "lm", linewidth = 2) +
   labs(
     title = "Completion % vs. Time to Throw",
     x = "Average Time to Throw (sec)",
@@ -265,8 +267,9 @@ ggplot(data = nfl_passes, aes(x = yards_gained, y = )) +
   theme_minimal()
 
 
-ggplot(data = nfl_passes, aes(x = time_to_throw, y = )) +
+ggplot(data = ds_1, aes(x = avg_time, y = completion_percentage)) +
   geom_point(color = "darkgreen") +
+  geom_smooth(method = "lm", linewidth = 2) +
   labs(
     title = "Completion % vs. Yards Gained",
     x = "Average Yards Gained",
@@ -291,7 +294,7 @@ geom_football("nfl",display_range="in_bounds_only") +
 
 
 
-
+# Wrong. X variable is categorical binary not numeric 
 nfl_passes |> 
   ggplot(aes(x = complete_pass, y = yards_gained)) +
   geom_point(color = "darkred", size = 4, alpha = 0.5) +
