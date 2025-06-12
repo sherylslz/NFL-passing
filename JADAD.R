@@ -69,7 +69,7 @@ passes_2 <- nfl_passes |>
 top_ten <- head(passes, 10) |> 
   select(passer_player_name, completion_percentage) |>
   rename("Player Name" = passer_player_name) 
-  
+
 
 
 # Making pretty table for top 10 players
@@ -124,9 +124,9 @@ top_20_t |>
 
 ## Average yards gained 
 avg_yards <- nfl_passes |>
-group_by(passer_player_name) |>
-summarize(avg_yards_gained = mean(yards_gained, na.rm = TRUE)) |>
-arrange(desc(avg_yards_gained)) 
+  group_by(passer_player_name) |>
+  summarize(avg_yards_gained = mean(yards_gained, na.rm = TRUE)) |>
+  arrange(desc(avg_yards_gained)) 
 
 top_20 <- head(avg_yards, 20) |>
   mutate(avg_yards_gained = round(avg_yards_gained, 2))
@@ -134,19 +134,19 @@ top_20 <- head(avg_yards, 20) |>
 ## TD/attempt player data 
 
 td_per_attempt <- nfl_passes |> 
-group_by(passer_player_name) |> 
-summarize(td_per_attempt = mean(touchdown, na.rm = TRUE)) 
+  group_by(passer_player_name) |> 
+  summarize(td_per_attempt = mean(touchdown, na.rm = TRUE)) 
 arrange(desc("td_per_attempt"))  
 
 
 ##TD per attempt Histogram 
 td_per_attempt |> 
   ggplot(aes(td_per_attempt))
-  geom_histogram()
-  
-  
+geom_histogram()
+
+
 ##
- 
+
 
 
 
@@ -178,10 +178,10 @@ ds_2 <- passes |>
   left_join(avgyards, by = "passer_player_name")
 
 ds_3 <- ds_2 |> 
-left_join(td_per_attempt, by = "passer_player_name")
+  left_join(td_per_attempt, by = "passer_player_name")
 
 ds_4 <- ds_1 |> 
-left_join(td_per_attempt, by = "passer_player_name")  
+  left_join(td_per_attempt, by = "passer_player_name")  
 
 ds_5 <- ds_1 |> 
   left_join(avg_yards, by = "passer_player_name")
@@ -222,42 +222,42 @@ ggplot(data = ds_3, aes(x = td_per_attempt , y = completion_percentage)) +
     title = "Completion % vs. td_per_attempt ",
     x = "Touch Down Per Attempt ",
     y = "Completion Percentage %") 
-     theme_minimal()
-     
+theme_minimal()
+
 #Average Yards gained by touch down per attempt 
-     ggplot(data = ds_3, aes(x = avg_yards_gained  , y = td_per_attempt ))+
-       geom_point(color = "darkgreen") +
-       labs(
-         title = "Avg Yards Gained vs. td_per_attempt ",
-         x = "Avg Yards Gained" ,
-         y = "Touch Down Per Attempt") 
-     theme_minimal()
-     
+ggplot(data = ds_3, aes(x = avg_yards_gained  , y = td_per_attempt ))+
+  geom_point(color = "darkgreen") +
+  labs(
+    title = "Avg Yards Gained vs. td_per_attempt ",
+    x = "Avg Yards Gained" ,
+    y = "Touch Down Per Attempt") 
+theme_minimal()
+
 ## Time to throw by touch down per attempt 
-     ggplot(data = ds_4, aes(x = avg_time , y = td_per_attempt ))+
-       geom_point(color = "darkgreen") +
-       labs(
-         title = "avg_time vs. td_per_attempt ",
-         x = "avg_time" ,
-         y = "Touch Down Per Attempt") 
-     theme_minimal()
-     
+ggplot(data = ds_4, aes(x = avg_time , y = td_per_attempt ))+
+  geom_point(color = "darkgreen") +
+  labs(
+    title = "avg_time vs. td_per_attempt ",
+    x = "avg_time" ,
+    y = "Touch Down Per Attempt") 
+theme_minimal()
+
 ## Time to throw by Average Yards gained 
-     
-     ggplot(data = ds_5, aes(x = avg_time , y = avg_yards_gained ))+
-       geom_point(color = "darkgreen") +
-       labs(
-         title = "avg_time vs. avg_yards_gained ",
-         x = "avg_time" ,
-         y = "avg_yards_gained") 
-     theme_minimal()
-     
 
-     
+ggplot(data = ds_5, aes(x = avg_time , y = avg_yards_gained ))+
+  geom_point(color = "darkgreen") +
+  labs(
+    title = "avg_time vs. avg_yards_gained ",
+    x = "avg_time" ,
+    y = "avg_yards_gained") 
+theme_minimal()
 
-     
-    # interception
-     
+
+
+
+
+# interception
+
 
 inter_ds <- nfl_passes |>
   dplyr::select(interception, passer_player_name) |>
@@ -283,7 +283,7 @@ ds_6 |>
   geom_point(size = 5, alpha = 1) + 
   ggthemes::scale_color_colorblind() +
   theme(legend.position = "bottom") 
-     
+
 
 
 
@@ -336,37 +336,6 @@ kmeans_ds_features |>
                geom = "point",
                ellipse = FALSE) +
   ggthemes::scale_color_colorblind() + 
-    geom_point(size = 5, alpha = 1) + 
-  theme_light()
-
-
-ds_6 |>
-  mutate(
-    player_clusters = as.factor(std_kmeans_cp$cluster)
-  ) |>
-  ggplot(aes(x = avg_yards_gained, y = completion_percentage,
-             color = player_clusters)) +
   geom_point(size = 5, alpha = 1) + 
-  ggthemes::scale_color_colorblind() +
-  theme(legend.position = "bottom") +
-  coord_fixed()
-
-
-########################################################
-Formation <- nfl_passes |>
-  select(offense_formation, complete_pass) |>
-  group_by(offense_formation) |>
-  summarize(total_pass = sum(complete_pass))
-
-Formation_p <- nfl_passes |>
-  count(offense_formation)
-
-names(Formation_p)[names(Formation_p) == "n"] <- "total_passes"
-Formation_p$completed_passes <- Formation$total_pass
-
-Formation_p <- Formation_p |>
-  mutate(completion_percentage = completed_passes/ total_passes) |>
-  arrange(desc(completion_percentage))
-
-
+  theme_light()
 
