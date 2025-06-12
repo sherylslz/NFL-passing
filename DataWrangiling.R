@@ -358,6 +358,9 @@ Formation <- nfl_passes |>
   group_by(offense_formation) |>
   summarize(total_pass = sum(complete_pass))
 
+Formation2 <- nfl_passes |>
+  select(offense_formation, complete_pass)
+
 Formation_p <- nfl_passes |>
   count(offense_formation)
 
@@ -368,5 +371,56 @@ Formation_p <- Formation_p |>
   mutate(completion_percentage = completed_passes/ total_passes) |>
   arrange(desc(completion_percentage))
 
+#############HEXBIN GRAPH##################
+
+Jalen_Hurts <- nfl_passes |>
+  filter(passer_player_name == "J.Hurts")
+
+Tua <- nfl_passes |>
+  filter(passer_player_name == "T.Tagovailoa")
+
+
+Tua |>
+  ggplot(aes(target_x, target_y))+
+  geom_hex(binwidth = c(1,1)) +
+  scale_fill_gradient(low = "darkblue",
+                      high = "gold")
+
+Jalen_Hurts |>
+  ggplot(aes(target_x, target_y))+
+  geom_hex(binwidth = c(1,1)) +
+  scale_fill_gradient(low = "darkblue",
+                      high = "gold")
+
+
+library(sportyR)
+football_field <- geom_football("NFL", x_trans = -41.5)
+fo +
+  geom_hex(data = clark_shots, aes(x = shot_x, y = shot_y), binwidth = c(1, 1)) + 
+  scale_fill_gradient(low = "midnightblue", high = "gold")
+
+Top_QBs_new <- Top_QBs |>
+  mutate(std_target_x = scale(target_x))
+
+geom_football("NFL") +
+  stat_summary_hex(aes(x = target_x - 60,
+                       y = target_y- (53.3/2),
+                       z = complete_pass,
+                       group = -1), data = Top_QBs,
+                   binwidth = c(3,3),
+                   fun = mean, color = 'black') +
+  scale_fill_gradient(low = "darkblue",
+                      high = "gold")
+
+completed_pass <- nfl_passes[which(nfl_passes$complete_pass == 1 & nfl_passes$passer_player_name=="L.Jackson"),]
+completed_pass$target_x <- completed_pass$target_x-60
+completed_pass$target_y <- completed_pass$target_y- (53.3/2)
+
+intercepted_pass <- nfl_passes[which(nfl_passes$interception == 1 & nfl_passes$passer_player_name=="L.Jackson"),]
+intercepted_pass$target_x <- intercepted_pass$target_x-60
+intercepted_pass$target_y <- intercepted_pass$target_y- (53.3/2)
+geom_football("nfl",display_range="in_bounds_only") +
+  geom_point(data=completed_pass,x=completed_pass$target_x,y=completed_pass$target_y, colour = "blue")+
+  geom_point(data=intercepted_pass,x=intercepted_pass$target_x,y=intercepted_pass$target_y,colour = "red")
 
 
