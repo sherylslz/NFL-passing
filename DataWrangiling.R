@@ -383,4 +383,28 @@ cluster_data |>
   ggplot(aes(x=completion_percentage, y=avg_yards_gained, color=cluster)) + 
   geom_point()+
   scale_color_calc()
+
+
+ #Cluster Plot: Completion percentage by Avg Yards gained 
+   cluster_data |> 
+   ggplot(aes(x=completion_percentage, y=avg_yards_gained, color=cluster, 
+                               label = passer_player_name)) + 
+   geom_point(size = 5)+
+   geom_text(hjust=0, vjust=0)
+   
+#Cluster Plot: Completion percentage by TD per attempt
+  cluster_data |> 
+  ggplot(aes(x=completion_percentage, y=td_per_attempt.x, color=cluster, 
+                             label = passer_player_name)) + 
+     geom_point(size = 5) + 
+   geom_text(hjust=0, vjust=0)
+
+ #Cluster Plot: Completion percentage by Int per atempt
+ cluster_data |> 
+   ggplot(aes(x=completion_percentage, y=interception_total, color=cluster,
+                               label = passer_player_name)) + 
+  geom_point(size = 5) + 
+  geom_text(hjust=0, vjust=0)
   
+ 
+ #hhhh
