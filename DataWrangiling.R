@@ -424,3 +424,41 @@ geom_football("nfl",display_range="in_bounds_only") +
   geom_point(data=intercepted_pass,x=intercepted_pass$target_x,y=intercepted_pass$target_y,colour = "red")
 
 
+##Cluster data set 
+
+cluster_data <- ds_features
+cluster_data$cluster <- kmeans_ds_features$cluster
+
+
+cluster_data <- ds_7 |>
+left_join(cluster_data, ds_7, by = "avg_yards_gained")
+
+cluster_data |> 
+  ggplot(aes(x=completion_percentage, y=avg_yards_gained, color=cluster)) + 
+  geom_point()+
+  scale_color_calc()
+
+
+ #Cluster Plot: Completion percentage by Avg Yards gained 
+   cluster_data |> 
+   ggplot(aes(x=completion_percentage, y=avg_yards_gained, color=cluster, 
+                               label = passer_player_name)) + 
+   geom_point(size = 5)+
+   geom_text(hjust=0, vjust=0)
+   
+#Cluster Plot: Completion percentage by TD per attempt
+  cluster_data |> 
+  ggplot(aes(x=completion_percentage, y=td_per_attempt.x, color=cluster, 
+                             label = passer_player_name)) + 
+     geom_point(size = 5) + 
+   geom_text(hjust=0, vjust=0)
+
+ #Cluster Plot: Completion percentage by Int per atempt
+ cluster_data |> 
+   ggplot(aes(x=completion_percentage, y=interception_total, color=cluster,
+                               label = passer_player_name)) + 
+  geom_point(size = 5) + 
+  geom_text(hjust=0, vjust=0)
+  
+ 
+ #hhhh
