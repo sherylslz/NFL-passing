@@ -31,6 +31,7 @@ names(passes)[names(passes) == "n"] <- "total_passes"
 passes$completed_passes <- nfl2$total_pass
 
 
+
 nfl1 <- nfl_passes |>
   mutate(attempted_pass = sum(completed_passes)/ sum(total_passes))
 
@@ -335,7 +336,7 @@ kmeans_ds_features |>
   fviz_cluster(data = std_ds_features,
                geom = "point",
                ellipse = FALSE) +
-  ggthemes::scale_color_colorblind() + 
-    geom_point(size = 5, alpha = 1) + 
-  theme_light()
+  ggthemes::scale_color_colorblind() +
+  theme_light() 
+
 
