@@ -10,6 +10,8 @@ library(kableExtra)
 library(nflverse)
 library(nflreadr)
 library(caret)
+library(rms)
+library(CalibrationCurves)
 # data set
 nfl_passes <- read_csv("https://raw.githubusercontent.com/36-SURE/2025/main/data/nfl_passes.csv")
 ```
@@ -125,7 +127,6 @@ model_3 <- glm(complete_pass ~ formation_type + route_type, data = nfl_passes3,
              family = binomial)
 msummary(model_3)
 
-
 ```
 ### Final Model Interpretation
 
@@ -163,10 +164,15 @@ by 1.55478 log of odds compared to when they run a deep route.
 > When we exponentiate this coefficient...
 
 > We can conclude that all routes have a higher likelihood of completing a pass 
-than deep routes (GO, POST, CORNER, and WHEEL). 
+than deep routes (GO, POST, CORNER, and WHEEL). Also, the only formation that seems
+to have a statisticall significant change in getting a pass completed is the 
+singleback formation, which has a higher likelihood of completing a pass than the
+empty formation.
 
 
-## Confusion Matrix
+## Evaluating the Performance of this Model
+
+### Confusion Matrix
 
 - To evaluate performance, we will use a confusion matrix.
 
@@ -222,7 +228,13 @@ nfl_passes3 %>% count(complete_pass)
 ```
 
 
+### Calibrate plot
 
+
+```{r}
+# has something to do woth bootstrap
+set.seed(100)
+```
 
 
 
