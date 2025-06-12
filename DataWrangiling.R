@@ -340,3 +340,17 @@ kmeans_ds_features |>
   theme_light() 
 
 
+##Cluster data set 
+
+cluster_data <- ds_features
+cluster_data$cluster <- kmeans_ds_features$cluster
+
+
+cluster_data <- ds_7 |>
+left_join(cluster_data, ds_7, by = "avg_yards_gained")
+
+cluster_data |> 
+  ggplot(aes(x=completion_percentage, y=avg_yards_gained, color=cluster)) + 
+  geom_point()+
+  scale_color_calc()
+  
