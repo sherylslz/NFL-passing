@@ -126,16 +126,44 @@ model_3 <- glm(complete_pass ~ formation_type + route_type, data = nfl_passes3,
 msummary(model_3)
 
 
-exp(1.43257) # exponentiation the log of odds
-
-
 ```
-
 ### Final Model Interpretation
+
+```{r}
+# exponentiating the coeffiecients of variables that were found to be statistically
+# significant
+
+exp(-0.39877) # log of odds of the intercept. What does it mean for the intercept to be significant?
+exp(0.29915) # log of odds for `formation_typeSINGLEBACK`
+exp(0.99247) # log of odds for `route_typeIntermediate`
+exp(1.43257) # log of odds for `route_typeOther`
+exp(1.55478) # log of odds for `route_typeShort`
+```
 
 $$logit(\widehat{\pi}) = - 0.39877 + 0.14419 (formation_typeI_FORM) + 
 0.02726(formation_typeSHOTGUN) + 0.29915(formation_typeSINGLEBACK) + 
 0.99247(route_typeIntermediate) + 1.43257(route_typeOther) + 1.55478(route_typeShort) $$ 
+
+> The coefficient for `formation_typeSINGLEBACK` is 0.29915 meaning that the likelihood 
+(or the odds) of players completing a pass when performing the singleback formation increases by 0.29915 log of odds (ratio of success to failure) compared to when players perform the empty formation. 
+> When we exponentiate this coefficient...
+
+> The coefficient for `route_typeIntermediate` is 0.99247 meaning that the likelihood of players completing a pass when they run an intermediate route (which includes ) increases by 0.99247 log of odds compared to when they run a deep route (which includes ).
+> When we exponentiate this coefficient...
+
+
+> The coefficient for `route_typeOther` is 1.43257 indicating that the likelihood 
+of players completing a pass when they run other type of routes (which include ) increases by 
+1.43257 log of odds compared to when they run a deep route.
+> When we exponentiate this coefficient...
+
+> The coefficient for `route_typeShort` is 1.55478 indicating that the likelihood 
+of players completing a pas when they run a short route (which includes ) increases
+by 1.55478 log of odds compared to when they run a deep route.
+> When we exponentiate this coefficient...
+
+> We can conclude that all routes have a higher likelihood of completing a pass 
+than deep routes (GO, POST, CORNER, and WHEEL). 
 
 
 ## Confusion Matrix
