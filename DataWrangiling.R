@@ -400,19 +400,61 @@ cluster_data |>
  
   gradient_data <- nfl_passes |>
     mutate(formation_type = case_when(
-  offense_formation %in% c("JUMBO", "WILDCAT", "PISTOL")
-  ~ "RARE FORMATIONS"))
+  offense_formation %in% c("JUMBO", "WILDCAT", "PISTOL") ~ "RARE FORMATIONS",
+   offense_formation %in% c("EMPTY") ~ "EMPTY",
+  offense_formation %in% c("SHOTGUN") ~ "SHOTGUN",
+  offense_formation %in% c("I_FORM") ~ " I_FORM",
+  offense_formation %in% c("SINGLEBACK") ~ "SINGLEBACK",
+  TRUE ~ "Other"))
+  
+  
+pony <-   gradient_data  |>
+    mutate(route_type = case_when(
+      route_ran %in% c("SLANT", "FLAT", "SCREEN", "HITCH") ~ "Short",
+      route_ran %in% c("IN", "OUT", "CROSS") ~ "Intermediate",
+      route_ran %in% c("GO", "POST", "CORNER", "WHEEL") ~ "Deep",
+      TRUE ~ "Other"
+    ))
+
+pony |> 
+  group_by(formation_type, route_type) |>
+  summarize(
+    freq = mean(complete_pass), 
+  ) |> 
+  ggplot(aes(x = formation_type, y = route_type)) +
+  geom_tile(aes(fill = freq), color = "white") +
+  geom_text(aes(label = freq))
+scale_fill_gradient2()
 
 
-   group_by(offense_formation, route_ran) |>
+pony |> 
+  group_by(formation_type, route_type) |>
+  summarize(
+    freq = mean(yards_gained), 
+  ) |> 
+  ggplot(aes(x = formation_type, y = route_type)) +
+  geom_tile(aes(fill = freq), color = "white") +
+  geom_text(aes(label = freq))
+scale_fill_gradient2()
+
+
+
+  gradient_data |> 
+   group_by(formation_type, route_ran) |>
    summarize(
      freq = mean(complete_pass), 
    ) |> 
-   ggplot(aes(x = offense_formation, y = route_ran)) +
+   ggplot(aes(x = formation_type, y = route_ran)) +
    geom_tile(aes(fill = freq), color = "white") +
   geom_text(aes(label = freq))
    scale_fill_gradient2()
   
+   
+
+
+pony |> 
+  group_by(passer_player_name) |>
+  summarise()
    
    
    
