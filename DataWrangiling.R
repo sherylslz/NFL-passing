@@ -372,42 +372,40 @@ Formation_p <- Formation_p |>
   arrange(desc(completion_percentage))
 
 #==========######################[ Plotting ]##################################
-
-Formation_p |>
-  ggplot(aes(x = offense_formation, y = completion_percentage)) +
-  geom_col()
-  
-
-Formation_plot <- Formation_p |>
-  mutate(offense_formation_grouped = case_when(
-    offense_formation %in% c("JUMBO", "WILDCAT", "PISTOL") ~ "rare formation",
-    TRUE ~ offense_formation
-  )) |>
-  group_by(offense_formation_grouped) |>
-  summarise(
-    total_passes = sum(total_passes),
-    completed_passes = sum(completed_passes),
-    completion_percentage = completed_passes / total_passes
-  )
-
+# ===========================[ Making the plot more easthetically pleasing]=====
 
 Formation_p_clean |>
-  ggplot(aes(x = completion_percentage, 
+  ggplot(aes(x = completion_percentage,
              y = reorder(offense_formation_grouped, completion_percentage))) +
-  geom_col(fill = "navyblue") +
+  
+#Bar aesthetics
+  geom_col(fill = "navyblue", width = 0.6) +
+  
+#Adding completion % label inside bar
+  geom_text(aes(label = scales::percent(completion_percentage, accuracy = 0.1)),
+            hjust = 1.1, color = "white", size = 4) +
+  
+# Add sample size label to right of the bar
   geom_text(aes(label = paste0("n = ", total_passes)),
-            hjust = -0.1, size = 3.5) +
+            hjust = -0.1, size = 3.5, color = "#333333") +
+  
+# Clean labels and theme
   labs(
     title = "Completion Percentage by Offense Formation",
+    subtitle = "completion rate and total count of pass attempts",
     x = "Completion Percentage",
     y = "Offense Formation"
   ) +
-  xlim(0, 1.05) +  # gives space for labels to the right
-  theme_minimal()
-
-
-
-
+  
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0, 1.05)) +
+  
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_text(face = "bold"),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank()
+  )
 
 
 #############HEXBIN GRAPH##################
