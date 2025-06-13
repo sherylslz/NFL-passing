@@ -701,4 +701,13 @@ Top_QB %>%
   ggplot(aes(x = passer_player_name, fill = target_player_name)) + 
   geom_bar() +
   facet_wrap(~ offense_formation)
->>>>>>> 7ebc262 (Update DataWrangiling.R)
+
+# ======================== [ MOSAIC PLOT ]=====================================-
+
+nfl_passes |> 
+  dplyr::select(offense_formation, route_ran) |> 
+  table() |> 
+  mosaicplot(main = "Relationship between 
+  offense formation and route ran")
+
+
