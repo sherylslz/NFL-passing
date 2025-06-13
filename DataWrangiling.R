@@ -391,16 +391,18 @@ Formation_plot <- Formation_p |>
   )
 
 
-Formation_plot |>
-  ggplot(aes(x = reorder(offense_formation_grouped, -completion_percentage), 
-             y = completion_percentage)) +
-  geom_col(fill = "#4C9F70") +
+Formation_p_clean |>
+  ggplot(aes(x = completion_percentage, 
+             y = reorder(offense_formation_grouped, completion_percentage))) +
+  geom_col(fill = "navyblue") +
+  geom_text(aes(label = paste0("n = ", total_passes)),
+            hjust = -0.1, size = 3.5) +
   labs(
     title = "Completion Percentage by Offense Formation",
-    x = "Offense Formation",
-    y = "Completion Percentage (%)"
+    x = "Completion Percentage",
+    y = "Offense Formation"
   ) +
-  ylim(0, 1) +
+  xlim(0, 1.05) +  # gives space for labels to the right
   theme_minimal()
 
 
