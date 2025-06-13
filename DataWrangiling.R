@@ -354,12 +354,12 @@ ds_6 |>
 
 ########################################################
 Formation <- nfl_passes |>
-  select(offense_formation, complete_pass) |>
-  group_by(offense_formation) |>
-  summarize(total_pass = sum(complete_pass))
+  dplyr::select(offense_formation, complete_pass) |>
+  dplyr::group_by(offense_formation) |>
+  dplyr::summarize(total_pass = sum(complete_pass))
 
 Formation2 <- nfl_passes |>
-  select(offense_formation, complete_pass)
+  dplyr::select(offense_formation, complete_pass)
 
 Formation_p <- nfl_passes |>
   count(offense_formation)
@@ -370,6 +370,43 @@ Formation_p$completed_passes <- Formation$total_pass
 Formation_p <- Formation_p |>
   mutate(completion_percentage = completed_passes/ total_passes) |>
   arrange(desc(completion_percentage))
+
+#==========######################[ Plotting ]##################################
+
+Formation_p |>
+  ggplot(aes(x = offense_formation, y = completion_percentage)) +
+  geom_col()
+  
+
+Formation_plot <- Formation_p |>
+  mutate(offense_formation_grouped = case_when(
+    offense_formation %in% c("JUMBO", "WILDCAT", "PISTOL") ~ "rare formation",
+    TRUE ~ offense_formation
+  )) |>
+  group_by(offense_formation_grouped) |>
+  summarise(
+    total_passes = sum(total_passes),
+    completed_passes = sum(completed_passes),
+    completion_percentage = completed_passes / total_passes
+  )
+
+
+Formation_plot |>
+  ggplot(aes(x = reorder(offense_formation_grouped, -completion_percentage), 
+             y = completion_percentage)) +
+  geom_col(fill = "#4C9F70") +
+  labs(
+    title = "Completion Percentage by Offense Formation",
+    x = "Offense Formation",
+    y = "Completion Percentage (%)"
+  ) +
+  ylim(0, 1) +
+  theme_minimal()
+
+
+
+
+
 
 #############HEXBIN GRAPH##################
 
