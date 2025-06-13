@@ -357,7 +357,112 @@ Formation_p <- Formation_p |>
   mutate(completion_percentage = completed_passes/ total_passes) |>
   arrange(desc(completion_percentage))
 
-<<<<<<< HEAD
+
+########################################################
+Formation <- nfl_passes |>
+  dplyr::select(offense_formation, complete_pass) |>
+  dplyr::group_by(offense_formation) |>
+  dplyr::summarize(total_pass = sum(complete_pass))
+
+Formation2 <- nfl_passes |>
+  dplyr::select(offense_formation, complete_pass)
+
+Formation_p <- nfl_passes |>
+  count(offense_formation)
+
+names(Formation_p)[names(Formation_p) == "n"] <- "total_passes"
+Formation_p$completed_passes <- Formation$total_pass
+
+Formation_p <- Formation_p |>
+  mutate(completion_percentage = completed_passes/ total_passes) |>
+  arrange(desc(completion_percentage))
+
+#==========######################[ Plotting ]##################################
+# ===========================[ Making the plot more aesthetically pleasing]=====
+
+Formation_p_clean <-  Formation_p |>
+  mutate(offense_formation = case_when(
+    offense_formation %in% c("JUMBO", "PISTOL", "WILDCAT") ~ "Other",
+    offense_formation %in% c("I_FORM") ~ "I_FORM",
+    offense_formation %in% c("SHOTGUN") ~ "SHOTGUN",
+    offense_formation %in% c("SINGLEBACK") ~ "SINGLEBACK",
+    offense_formation %in% c("EMPTY") ~ "EMPTY",
+    TRUE ~ "Other"
+  ))
+
+Formation_p_clean |>
+  ggplot(aes(x = completion_percentage,
+             y = reorder(offense_formation, completion_percentage))) +
+  geom_col(fill = "navyblue", width = 0.6) +
+  geom_text(aes(label = scales::percent(completion_percentage, accuracy = 0.1)),
+            hjust = 1.1, color = "white", size = 4) +
+  geom_text(aes(label = paste0("n = ", total_passes)),
+            hjust = -0.1, size = 3.5, color = "#333333") +
+  labs(
+    title = "Completion Percentage by Offense Formation",
+    subtitle = "completion rate and total count of pass attempts",
+    x = "Completion Percentage",
+    y = "Offense Formation"
+  ) +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0, 1.05)) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_text(face = "bold"),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+#######################[ ROUTE TYPE PLOT ]#################################
+
+route <- nfl_passes |>
+  dplyr::select(route_ran, complete_pass) |>
+  dplyr::group_by(route_ran) |>
+  dplyr::summarize(total_pass = sum(complete_pass))
+
+route2 <- nfl_passes |>
+  dplyr::select(route_ran, complete_pass)
+
+route_p <- nfl_passes |>
+  count(route_ran)
+
+names(route_p)[names(route_p) == "n"] <- "total_passes"
+route_p$completed_passes <- route$total_pass
+
+route_p_clean <- route_p |>
+  mutate(completion_percentage = completed_passes/ total_passes) |>
+  arrange(desc(completion_percentage))
+
+# ====================================== plotting ==============================
+
+route_p_clean |>
+  ggplot(aes(x = completion_percentage,
+             y = reorder(offense_route_grouped, completion_percentage))) +
+  geom_col(fill = "navyblue", width = 0.6) +
+  geom_text(aes(label = scales::percent(completion_percentage, accuracy = 0.1)),
+            hjust = 1.1, color = "white", size = 4) +
+  geom_text(aes(label = paste0("n = ", total_passes)),
+            hjust = -0.1, size = 3.5, color = "#333333") +
+  labs(
+    title = "Completion Percentage by Offense Formation",
+    subtitle = "completion rate and total count of pass attempts",
+    x = "Completion Percentage",
+    y = "Offense Formation"
+  ) +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0, 1.05)) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_text(face = "bold"),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+
+
+
+
+
 =======
 #############HEXBIN GRAPH##################
 
