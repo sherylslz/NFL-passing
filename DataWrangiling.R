@@ -416,6 +416,7 @@ pony <-   gradient_data  |>
       TRUE ~ "Other"
     ))
 
+##Completion percentage formation and Route gradient with grouping
 pony |> 
   group_by(formation_type, route_type) |>
   summarize(
@@ -426,6 +427,7 @@ pony |>
   geom_text(aes(label = freq))
 scale_fill_gradient2()
 
+##Avg yards formation and Route gradient with grouping
 
 pony |> 
   group_by(formation_type, route_type) |>
@@ -438,7 +440,7 @@ pony |>
 scale_fill_gradient2()
 
 
-
+##Gradient without grouping
   gradient_data |> 
    group_by(formation_type, route_ran) |>
    summarize(
@@ -450,12 +452,17 @@ scale_fill_gradient2()
    scale_fill_gradient2()
   
    
+## updating ds_7 data set with number of routes ran grouped by player
 
-
-pony |> 
+player_routes <- pony |> 
   group_by(passer_player_name) |>
-  summarise()
-   
+  count(route_type) |>
+  pivot_wider(names_from = route_type, values_from=n) |>
+  mutate_all(~replace(., is.na(.), 0))
+
+ds7 <- ds_7 |>
+  left_join(player_routes, by = "passer_player_name")
+
    
    
 
