@@ -358,6 +358,184 @@ Formation_p <- Formation_p |>
   arrange(desc(completion_percentage))
 
 
+########################################################
+Formation <- nfl_passes |>
+  dplyr::select(offense_formation, complete_pass) |>
+  dplyr::group_by(offense_formation) |>
+  dplyr::summarize(total_pass = sum(complete_pass))
+
+Formation2 <- nfl_passes |>
+  dplyr::select(offense_formation, complete_pass)
+
+Formation_p <- nfl_passes |>
+  count(offense_formation)
+
+names(Formation_p)[names(Formation_p) == "n"] <- "total_passes"
+Formation_p$completed_passes <- Formation$total_pass
+
+Formation_p <- Formation_p |>
+  mutate(completion_percentage = completed_passes/ total_passes) |>
+  arrange(desc(completion_percentage))
+
+#==========######################[ Plotting ]##################################
+# ===========================[ Making the plot more aesthetically pleasing]=====
+
+Formation_p_clean <-  Formation_p |>
+  mutate(offense_formation = case_when(
+    offense_formation %in% c("JUMBO", "PISTOL", "WILDCAT") ~ "Other",
+    offense_formation %in% c("I_FORM") ~ "I_FORM",
+    offense_formation %in% c("SHOTGUN") ~ "SHOTGUN",
+    offense_formation %in% c("SINGLEBACK") ~ "SINGLEBACK",
+    offense_formation %in% c("EMPTY") ~ "EMPTY",
+    TRUE ~ "Other"
+  ))
+
+Formation_p_clean |>
+  ggplot(aes(x = completion_percentage,
+             y = reorder(offense_formation, completion_percentage))) +
+  geom_col(fill = "navyblue", width = 0.6) +
+  geom_text(aes(label = scales::percent(completion_percentage, accuracy = 0.1)),
+            hjust = 1.1, color = "white", size = 4) +
+  geom_text(aes(label = paste0("n = ", total_passes)),
+            hjust = -0.1, size = 3.5, color = "#333333") +
+  labs(
+    title = "Completion Percentage by Offense Formation",
+    subtitle = "completion rate and total count of pass attempts",
+    x = "Completion Percentage",
+    y = "Offense Formation"
+  ) +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0, 1.05)) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_text(face = "bold"),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+#######################[ ROUTE TYPE PLOT ]#################################
+
+route <- nfl_passes |>
+  dplyr::select(route_ran, complete_pass) |>
+  dplyr::group_by(route_ran) |>
+  dplyr::summarize(total_pass = sum(complete_pass))
+
+route2 <- nfl_passes |>
+  dplyr::select(route_ran, complete_pass)
+
+route_p <- nfl_passes |>
+  count(route_ran)
+
+names(route_p)[names(route_p) == "n"] <- "total_passes"
+route_p$completed_passes <- route$total_pass
+
+route_p_clean <- route_p |>
+  mutate(completion_percentage = completed_passes/ total_passes) |>
+  arrange(desc(completion_percentage))
+
+# ====================================== plotting ==============================
+
+route_p_clean |>
+  ggplot(aes(x = completion_percentage,
+             y = reorder(offense_route_grouped, completion_percentage))) +
+  geom_col(fill = "navyblue", width = 0.6) +
+  geom_text(aes(label = scales::percent(completion_percentage, accuracy = 0.1)),
+            hjust = 1.1, color = "white", size = 4) +
+  geom_text(aes(label = paste0("n = ", total_passes)),
+            hjust = -0.1, size = 3.5, color = "#333333") +
+  labs(
+    title = "Completion Percentage by Offense Formation",
+    subtitle = "completion rate and total count of pass attempts",
+    x = "Completion Percentage",
+    y = "Offense Formation"
+  ) +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0, 1.05)) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_text(face = "bold"),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+
+
+
+
+#############HEXBIN GRAPH##################
+
+Jalen_Hurts <- nfl_passes |>
+  filter(passer_player_name == "J.Hurts")
+
+Tua <- nfl_passes |>
+  filter(passer_player_name == "T.Tagovailoa")
+
+Tua |>
+  ggplot(aes(target_x, target_y))+
+  geom_hex(binwidth = c(1,1)) +
+  scale_fill_gradient(low = "darkblue",
+                      high = "gold")
+
+Jalen_Hurts |>
+  ggplot(aes(target_x, target_y))+
+  geom_hex(binwidth = c(1,1)) +
+  scale_fill_gradient(low = "darkblue",
+                      high = "gold")
+
+
+library(sportyR)
+library(hexbin)
+football_field <- geom_football("NFL", x_trans = -41.5)
+fo +
+  geom_hex(data = clark_shots, aes(x = shot_x, y = shot_y), binwidth = c(1, 1)) + 
+  scale_fill_gradient(low = "midnightblue", high = "gold")
+
+Top_QBs_new <- Top_QBs |>
+  mutate(std_target_x = scale(target_x))
+
+library(ggplot2)
+library(cowplot)
+#Hurts graph
+geom_football("NFL") +
+  stat_summary_hex(aes(x = target_x - 60,
+                       y = target_y- (53.3/2),
+                       z = interception,
+                       group = -1), data = Jalen_Hurts,
+                   binwidth = c(3,3),
+                   fun = mean, color = 'black') +
+  scale_fill_gradient(low = "darkblue",
+                      high = "gold")
+
+
+
+
+
+#Tua graph
+geom_football("NFL") +
+  stat_summary_hex(aes(x = target_x - 60,
+                       y = target_y- (53.3/2),
+                       z = complete_pass,
+                       group = -1), data = Tua,
+                   binwidth = c(3,3),
+                   fun = mean, color = 'black') +
+  scale_fill_gradient(low = "darkblue",
+                      high = "gold")
+
+
+
+
+completed_pass <- nfl_passes[which(nfl_passes$complete_pass == 1 & nfl_passes$passer_player_name=="L.Jackson"),]
+completed_pass$target_x <- completed_pass$target_x-60
+completed_pass$target_y <- completed_pass$target_y- (53.3/2)
+
+intercepted_pass <- nfl_passes[which(nfl_passes$interception == 1 & nfl_passes$passer_player_name=="L.Jackson"),]
+intercepted_pass$target_x <- intercepted_pass$target_x-60
+intercepted_pass$target_y <- intercepted_pass$target_y- (53.3/2)
+geom_football("nfl",display_range="in_bounds_only") +
+  geom_point(data=completed_pass,x=completed_pass$target_x,y=completed_pass$target_y, colour = "blue")+
+  geom_point(data=intercepted_pass,x=intercepted_pass$target_x,y=intercepted_pass$target_y,colour = "red")
+>>>>>>> 7ebc262 (Update DataWrangiling.R)
+
 
 ##Cluster data set 
 
@@ -395,6 +573,7 @@ cluster_data |>
   geom_point(size = 5) + 
   geom_text(hjust=0, vjust=0)
  
+<<<<<<< HEAD
 
 ##Gradient Joint Distribution Graph 
  
@@ -465,5 +644,124 @@ ds7 <- ds_7 |>
 
    
    
+
+
+=======
+ #hhhh
+ 
+Top_QB <- nfl_passes |>
+  filter(passer_player_name == "J.Hurts" | passer_player_name == "T.Tagovailoa" |  passer_player_name == "P.Mahomes")
+
+
+library(ggplot2)
+Top_QB |>
+   count(passer_player_name, complete_pass) |>
+   ggplot(aes(x = passer_player_name, y = n, 
+              fill = complete_pass)) +
+  geom_col(position = "fill")
+
+Top_QB |>
+  count(offense_formation, passer_player_name) |>
+  ggplot(aes(x = offense_formation, y = n, 
+             fill = passer_player_name)) + 
+  geom_col(position = "dodge")
+
+
+Top_QB %>%
+  ggplot(aes(x = passer_player_name, fill = target_player_name)) + 
+  geom_bar() +
+  facet_wrap(~ offense_formation)
+
+
+##############Team Completion Percentage#######################
+Teams <- nfl_passes |>
+  count(posteam)
+
+nfl12 <- nfl_passes |>
+  select(posteam, complete_pass) |>
+  group_by(posteam) |>
+  summarize(total_pass = sum(complete_pass))
+
+names(Teams)[names(Teams) == "n"] <- "total_passes"
+Teams$completed_passes <- nfl12$total_pass
+
+Teams <- Teams |>
+  mutate(completion_percentage = completed_passes/ total_passes) |>
+  arrange(desc(completion_percentage))
+
+Top_5_Teams <- Teams2 |>
+  head(5)
+############################################################
+nfl13 <- nfl_passes |>
+  select(posteam, offense_formation,complete_pass) |>
+  group_by(posteam, offense_formation) |>
+  summarize(total_pass = sum(complete_pass))
+
+Teams2 <- nfl_passes |>
+  count(posteam,offense_formation)
+
+names(Teams2)[names(Teams2) == "n"] <- "total_passes"
+Teams2$completed_passes <- nfl13$total_pass
+
+Teams2 <- Teams2 |>
+  mutate(completion_percentage = completed_passes/ total_passes) |>
+  arrange(desc(completion_percentage))
+
+Top_5_Teams <- Teams2 |>
+  head(5)
+
+Top_5_Teams |>
+  count(posteam, offense_formation) |>
+  ggplot(aes(x = posteam, y = n, 
+             fill = offense_formation)) + 
+  geom_col(position = "dodge")
+
+
+#######FORMATION VS. TEAMS##########
+Teams3 <- nfl_passes |>
+  filter(offense_formation == "EMPTY" |
+           offense_formation == "I_FORM" |
+           offense_formation == "JUMBO" |
+           offense_formation == "PISTOL" |
+           offense_formation == "SHOTGUN" |
+           offense_formation == "SINGLEBACK",
+         posteam == "SEA" |
+           posteam == "PHI" |
+           posteam == "CIN" |
+           posteam == "NE" |
+           posteam == "IND" |
+           posteam == "ARI" |
+           posteam == "LA" |
+           posteam == "MIN" |
+           posteam == "KC" |
+           posteam == "JAX")
+
+
+library(ggplot2)
+Teams3 |>
+  count(offense_formation, posteam) |>
+  ggplot(aes(x = offense_formation, y = n, 
+             fill = posteam)) +
+  geom_col(position = "fill")
+
+Top_QB |>
+  count(offense_formation, passer_player_name) |>
+  ggplot(aes(x = offense_formation, y = n, 
+             fill = passer_player_name)) + 
+  geom_col(position = "dodge")
+
+
+Top_QB %>%
+  ggplot(aes(x = passer_player_name, fill = target_player_name)) + 
+  geom_bar() +
+  facet_wrap(~ offense_formation)
+
+# ======================== [ MOSAIC PLOT ]=====================================-
+
+nfl_passes |> 
+  dplyr::select(offense_formation, route_ran) |> 
+  table() |> 
+  mosaicplot(main = "Relationship between 
+  offense formation and route ran")
 
 
