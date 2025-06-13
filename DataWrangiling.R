@@ -398,8 +398,11 @@ cluster_data |>
 
 ##Gradient Joint Distribution Graph 
  
-nfl_passes |>
-  gradient_data <- nfl_passes
+  gradient_data <- nfl_passes |>
+    mutate(formation_type = case_when(
+  offense_formation %in% c("JUMBO", "WILDCAT", "PISTOL")
+  ~ "RARE FORMATIONS"))
+
 
    group_by(offense_formation, route_ran) |>
    summarize(
@@ -409,7 +412,9 @@ nfl_passes |>
    geom_tile(aes(fill = freq), color = "white") +
   geom_text(aes(label = freq))
    scale_fill_gradient2()
+  
    
-   ###fefqwrf
+   
+   
 
 
