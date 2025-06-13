@@ -407,6 +407,37 @@ Formation_p_clean |>
     panel.grid.minor = element_blank()
   )
 
+#######################[ ROUTE TYPE PLOT ]#################################
+
+route <- nfl_passes |>
+  dplyr::select(route_ran, complete_pass) |>
+  dplyr::group_by(route_ran) |>
+  dplyr::summarize(total_pass = sum(complete_pass))
+
+route2 <- nfl_passes |>
+  dplyr::select(route_ran, complete_pass)
+
+route_p <- nfl_passes |>
+  count(route_ran)
+
+names(route_p)[names(route_p) == "n"] <- "total_passes"
+route_p$completed_passes <- route$total_pass
+
+route_p <- route_p |>
+  mutate(completion_percentage = completed_passes/ total_passes) |>
+  arrange(desc(completion_percentage))
+
+
+
+
+
+
+
+
+
+
+
+
 
 #############HEXBIN GRAPH##################
 
