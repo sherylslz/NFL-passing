@@ -175,7 +175,7 @@ ds_1 <- passes |>
   left_join(avg_time, by = "passer_player_name")
 
 ds_2 <- passes |>
-  left_join(avgyards, by = "passer_player_name")
+  left_join(avg_yards, by = "passer_player_name")
 
 ds_3 <- ds_2 |> 
 left_join(td_per_attempt, by = "passer_player_name")
