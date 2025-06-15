@@ -534,7 +534,6 @@ intercepted_pass$target_y <- intercepted_pass$target_y- (53.3/2)
 geom_football("nfl",display_range="in_bounds_only") +
   geom_point(data=completed_pass,x=completed_pass$target_x,y=completed_pass$target_y, colour = "blue")+
   geom_point(data=intercepted_pass,x=intercepted_pass$target_x,y=intercepted_pass$target_y,colour = "red")
->>>>>>> 7ebc262 (Update DataWrangiling.R)
 
 
 ##Cluster data set 
@@ -573,7 +572,6 @@ cluster_data |>
   geom_point(size = 5) + 
   geom_text(hjust=0, vjust=0)
  
-<<<<<<< HEAD
 
 ##Gradient Joint Distribution Graph 
  
@@ -643,11 +641,6 @@ ds7 <- ds_7 |>
   left_join(player_routes, by = "passer_player_name")
 
    
-   
-
-
-=======
- #hhhh
  
 Top_QB <- nfl_passes |>
   filter(passer_player_name == "J.Hurts" | passer_player_name == "T.Tagovailoa" |  passer_player_name == "P.Mahomes")
@@ -756,7 +749,7 @@ Teams3 %>%
   geom_bar() +
   facet_wrap(~ offense_formation)
 
-<<<<<<< HEAD
+
 nfl_passes |> 
   filter(offense_formation %in% c("EMPTY", "I_FORM", "JUMBO", "PISTOL", "SHOTGUN", "SINGLEBACK")) |>
   ggplot(aes(x = yards_gained, color = offense_formation)) +
@@ -774,7 +767,7 @@ nfl_passes |>
   ggplot(aes(x = time_to_throw, fill = offense_formation)) +
   geom_histogram(alpha = 0.6, bins = 15) 
   #+scale_fill_albums()
-=======
+
 # ======================== [ MOSAIC PLOT ]=====================================-
 
 nfl_passes |> 
@@ -784,4 +777,4 @@ nfl_passes |>
   offense formation and route ran")
 
 
->>>>>>> 8a28844f15e380f245ed35b2cee4a912513aed68
+
