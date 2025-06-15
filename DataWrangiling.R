@@ -639,7 +639,10 @@ player_routes <- pony |>
   pivot_wider(names_from = route_type, values_from=n) |>
   mutate_all(~replace(., is.na(.), 0))
 
-ds7 <- ds_7 |>
+ds_6 <- ds_6 |>
+left_join(player_routes, by = "passer_player_name")
+
+ds_7 <- ds_7 |>
   left_join(player_routes, by = "passer_player_name")
 
    
