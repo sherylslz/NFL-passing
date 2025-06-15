@@ -271,7 +271,8 @@ inter_ds <- nfl_passes |>
 ## not the bets metric to judge the quality of a player
 
 clust_nfl <- ds_6 |> 
-  dplyr::select(completion_percentage, avg_yards_gained, td_per_attempt) |> 
+  dplyr::select(std_completion_percentage, std_avg_yards_gained, 
+                std_td_per_attempt, std_interception_total) |> 
   kmeans(algorithm = "Lloyd", centers = 4, nstart = 1)
 
 ds_6 |>
@@ -293,7 +294,9 @@ ds_6 |>
 ds_6 <- ds_6 |>
   dplyr::mutate(
     std_completion_percentage = as.numeric(scale(completion_percentage, center = TRUE, scale = TRUE)),
-    std_avg_yards_gained = as.numeric(scale(avg_yards_gained, center = TRUE, scale = TRUE))
+    std_avg_yards_gained = as.numeric(scale(avg_yards_gained, center = TRUE, scale = TRUE)),
+    std_td_per_attempt = as.numeric(scale(td_per_attempt, center = TRUE, scale = TRUE)),
+    std_interception_total = as.numeric(scale(interception_total, center = TRUE, scale = TRUE))
   )
 
 std_kmeans_cp <- ds_6 |> 
@@ -545,11 +548,6 @@ cluster_data$cluster <- kmeans_ds_features$cluster
 cluster_data <- ds_7 |>
 left_join(cluster_data, ds_7, by = "avg_yards_gained")
 
-cluster_data |> 
-  ggplot(aes(x=completion_percentage, y=avg_yards_gained, color=cluster)) + 
-  geom_point()+
-  scale_color_calc()
-
 
  #Cluster Plot: Completion percentage by Avg Yards gained 
    cluster_data |> 
@@ -642,6 +640,14 @@ left_join(player_routes, by = "passer_player_name")
 
 ds_7 <- ds_7 |>
   left_join(player_routes, by = "passer_player_name")
+  
+  ggplot(data = ds_7, aes(x = Short, y = avg_yards_gained )) +
+  geom_point(color = "blue") +
+  labs(
+    title = "Completion % vs. Time to Throw",
+    x = "Deep",
+    y = "Avg_yards")
+  
 
    
  
