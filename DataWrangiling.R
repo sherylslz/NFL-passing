@@ -537,6 +537,10 @@ intercepted_pass$target_y <- intercepted_pass$target_y- (53.3/2)
 geom_football("nfl",display_range="in_bounds_only") +
   geom_point(data=completed_pass,x=completed_pass$target_x,y=completed_pass$target_y, colour = "blue")+
   geom_point(data=intercepted_pass,x=intercepted_pass$target_x,y=intercepted_pass$target_y,colour = "red")
+<<<<<<< HEAD
+#>>>>>>> 7ebc262 (Update DataWrangiling.R)
+=======
+>>>>>>> fa433d2545ee95ca23f892a86c7dbdb8d62ab807
 
 
 ##Cluster data set 
@@ -570,6 +574,10 @@ left_join(cluster_data, ds_7, by = "avg_yards_gained")
   geom_point(size = 5) + 
   geom_text(hjust=0, vjust=0)
  
+<<<<<<< HEAD
+#<<<<<<< HEAD
+=======
+>>>>>>> fa433d2545ee95ca23f892a86c7dbdb8d62ab807
 
 ##Gradient Joint Distribution Graph 
  
@@ -721,29 +729,38 @@ Top_5_Teams |>
 
 #######FORMATION VS. TEAMS##########
 Teams3 <- nfl_passes |>
-  filter(offense_formation == "EMPTY" |
+  filter(route_ran == "EMPTY" |
            offense_formation == "I_FORM" |
            offense_formation == "JUMBO" |
            offense_formation == "PISTOL" |
            offense_formation == "SHOTGUN" |
            offense_formation == "SINGLEBACK",
-         posteam == "SEA" |
-           posteam == "PHI" |
-           posteam == "CIN" |
-           posteam == "NE" |
-           posteam == "IND" |
-           posteam == "ARI" |
-           posteam == "LA" |
-           posteam == "MIN" |
-           posteam == "KC" |
-           posteam == "JAX")
+         passer_player_name == "G.Smith" |
+           passer_player_name == "J.Hurts" |
+           passer_player_name == "M.Ryan" |
+           passer_player_name == "J.Burrow" |
+           passer_player_name =="T.Tagovailoa" |
+           passer_player_name == "K.Pickett" |
+           passer_player_name == "K.Murray" |
+           passer_player_name == "M.Stafford" |
+           passer_player_name == "P.Mahomes" |
+           passer_player_name == "K.Cousins")
+
+Teams4 <- nfl_passes |>
+  select(passer_player_name,route_ran,complete_pass) |>
+  mutate(route_type = case_when(
+    route_ran %in% c("SLANT", "FLAT", "SCREEN", "HITCH") ~ "Short",
+    route_ran %in% c("IN", "OUT", "CROSS") ~ "Intermediate",
+    route_ran %in% c("GO", "POST", "CORNER", "WHEEL") ~ "Deep",
+    TRUE ~ "Other"
+  )) 
 
 
 library(ggplot2)
-Teams3 |>
-  count(offense_formation, posteam) |>
-  ggplot(aes(x = offense_formation, y = n, 
-             fill = posteam)) +
+ds_6 |>
+  count(Deep.y, passer_player_name) |>
+  ggplot(aes(x = Deep.y, y = n, 
+             fill = Deep.y)) +
   geom_col(position = "fill")
 
 Top_QB |>
@@ -758,7 +775,11 @@ Teams3 %>%
   geom_bar() +
   facet_wrap(~ offense_formation)
 
+<<<<<<< HEAD
+#<<<<<<< HEAD
+=======
 
+>>>>>>> fa433d2545ee95ca23f892a86c7dbdb8d62ab807
 nfl_passes |> 
   filter(offense_formation %in% c("EMPTY", "I_FORM", "JUMBO", "PISTOL", "SHOTGUN", "SINGLEBACK")) |>
   ggplot(aes(x = yards_gained, color = offense_formation)) +
@@ -785,5 +806,42 @@ nfl_passes |>
   mosaicplot(main = "Relationship between 
   offense formation and route ran")
 
+##################
+library(ggmosaic)
+nfl_passes |>
+  ggplot() +
+  geom_mosaic(aes(x=product(offense_formation, route_ran), fill = offense_formation))
+
+<<<<<<< HEAD
+nfl_passes %>%
+  ggplot(aes(x = offense_formation, fill = complete_pass)) + 
+  geom_bar()+
+  facet_wrap(~ route_ran)
+#=======
+ ################################ROUTE VS. QB###################
+Teams4 <- nfl_passes |>
+  select(passer_player_name,route_ran,complete_pass) |>
+  filter(passer_player_name == "G.Smith" |
+           passer_player_name == "J.Hurts" |
+           passer_player_name == "M.Ryan" |
+           passer_player_name == "J.Burrow" |
+           passer_player_name =="T.Tagovailoa" |
+           passer_player_name == "K.Pickett" |
+           passer_player_name == "K.Murray" |
+           passer_player_name == "M.Stafford" |
+           passer_player_name == "P.Mahomes" |
+           passer_player_name == "K.Cousins") |>
+  mutate(route_type = case_when(
+    route_ran %in% c("SLANT", "FLAT", "SCREEN", "HITCH") ~ "Short",
+    route_ran %in% c("IN", "OUT", "CROSS") ~ "Intermediate",
+    route_ran %in% c("GO", "POST", "CORNER", "WHEEL") ~ "Deep",
+    TRUE ~ "Other"
+  )) 
 
 
+library(ggplot2)
+Teams3 |>
+  count(offense_formation, passer_player_name) |>
+  ggplot(aes(x = offense_formation, y = n, 
+             fill = passer_player_name)) +
+  geom_col(position = "fill")
