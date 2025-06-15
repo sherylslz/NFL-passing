@@ -437,7 +437,7 @@ route_p_clean <- route_p |>
 
 route_p_clean |>
   ggplot(aes(x = completion_percentage,
-             y = reorder(offense_route_grouped, completion_percentage))) +
+             y = reorder(route_ran, completion_percentage))) +
   geom_col(fill = "navyblue", width = 0.6) +
   geom_text(aes(label = scales::percent(completion_percentage, accuracy = 0.1)),
             hjust = 1.1, color = "white", size = 4) +
