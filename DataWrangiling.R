@@ -175,7 +175,7 @@ ds_1 <- passes |>
   left_join(avg_time, by = "passer_player_name")
 
 ds_2 <- passes |>
-  left_join(avgyards, by = "passer_player_name")
+  left_join(avg_yards, by = "passer_player_name")
 
 ds_3 <- ds_2 |> 
 left_join(td_per_attempt, by = "passer_player_name")
@@ -437,7 +437,7 @@ route_p_clean <- route_p |>
 
 route_p_clean |>
   ggplot(aes(x = completion_percentage,
-             y = reorder(offense_route_grouped, completion_percentage))) +
+             y = reorder(route_ran, completion_percentage))) +
   geom_col(fill = "navyblue", width = 0.6) +
   geom_text(aes(label = scales::percent(completion_percentage, accuracy = 0.1)),
             hjust = 1.1, color = "white", size = 4) +
@@ -534,7 +534,6 @@ intercepted_pass$target_y <- intercepted_pass$target_y- (53.3/2)
 geom_football("nfl",display_range="in_bounds_only") +
   geom_point(data=completed_pass,x=completed_pass$target_x,y=completed_pass$target_y, colour = "blue")+
   geom_point(data=intercepted_pass,x=intercepted_pass$target_x,y=intercepted_pass$target_y,colour = "red")
->>>>>>> 7ebc262 (Update DataWrangiling.R)
 
 
 ##Cluster data set 
@@ -573,7 +572,6 @@ cluster_data |>
   geom_point(size = 5) + 
   geom_text(hjust=0, vjust=0)
  
-<<<<<<< HEAD
 
 ##Gradient Joint Distribution Graph 
  
@@ -646,11 +644,6 @@ ds_7 <- ds_7 |>
   left_join(player_routes, by = "passer_player_name")
 
    
-   
-
-
-=======
- #hhhh
  
 Top_QB <- nfl_passes |>
   filter(passer_player_name == "J.Hurts" | passer_player_name == "T.Tagovailoa" |  passer_player_name == "P.Mahomes")
@@ -754,10 +747,29 @@ Top_QB |>
   geom_col(position = "dodge")
 
 
-Top_QB %>%
-  ggplot(aes(x = passer_player_name, fill = target_player_name)) + 
+Teams3 %>%
+  ggplot(aes(x = posteam, fill = passer_player_name)) + 
   geom_bar() +
   facet_wrap(~ offense_formation)
+
+
+nfl_passes |> 
+  filter(offense_formation %in% c("EMPTY", "I_FORM", "JUMBO", "PISTOL", "SHOTGUN", "SINGLEBACK")) |>
+  ggplot(aes(x = yards_gained, color = offense_formation)) +
+  stat_ecdf(linewidth = 1) +
+ # scale_color_colorblind() + # from the taylor package 
+  theme(legend.position = "bottom")
+
+library(GGally)
+nfl_passes |> 
+  select(yards_gained, time_to_throw) |> 
+  ggpairs()
+
+nfl_passes |> 
+  filter(offense_formation %in% c("EMPTY", "I_FORM", "JUMBO", "PISTOL", "SHOTGUN", "SINGLEBACK")) |>
+  ggplot(aes(x = time_to_throw, fill = offense_formation)) +
+  geom_histogram(alpha = 0.6, bins = 15) 
+  #+scale_fill_albums()
 
 # ======================== [ MOSAIC PLOT ]=====================================-
 
@@ -766,5 +778,6 @@ nfl_passes |>
   table() |> 
   mosaicplot(main = "Relationship between 
   offense formation and route ran")
+
 
 
