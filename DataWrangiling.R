@@ -845,3 +845,13 @@ Teams3 |>
   ggplot(aes(x = offense_formation, y = n, 
              fill = passer_player_name)) +
   geom_col(position = "fill")
+
+
+
+
+#++++++===================== ELBOW PLOT
+
+
+ds_6 |>
+  select(std_completion_percentage, std_avg_yards_gained, std_td_per_attempt, std_interception_total) |>
+  fviz_nbclust(kmeans, method = "wss")
