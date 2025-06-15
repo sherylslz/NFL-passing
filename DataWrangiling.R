@@ -594,8 +594,25 @@ Top_QB |>
   geom_col(position = "dodge")
 
 
-Top_QB %>%
-  ggplot(aes(x = passer_player_name, fill = target_player_name)) + 
+Teams3 %>%
+  ggplot(aes(x = posteam, fill = passer_player_name)) + 
   geom_bar() +
   facet_wrap(~ offense_formation)
->>>>>>> 7ebc262 (Update DataWrangiling.R)
+
+nfl_passes |> 
+  filter(offense_formation %in% c("EMPTY", "I_FORM", "JUMBO", "PISTOL", "SHOTGUN", "SINGLEBACK")) |>
+  ggplot(aes(x = yards_gained, color = offense_formation)) +
+  stat_ecdf(linewidth = 1) +
+ # scale_color_colorblind() + # from the taylor package 
+  theme(legend.position = "bottom")
+
+library(GGally)
+nfl_passes |> 
+  select(yards_gained, time_to_throw) |> 
+  ggpairs()
+
+nfl_passes |> 
+  filter(offense_formation %in% c("EMPTY", "I_FORM", "JUMBO", "PISTOL", "SHOTGUN", "SINGLEBACK")) |>
+  ggplot(aes(x = time_to_throw, fill = offense_formation)) +
+  geom_histogram(alpha = 0.6, bins = 15) 
+  #+scale_fill_albums()
