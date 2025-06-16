@@ -845,14 +845,15 @@ Teams3 |>
 nfl_grouped <- nfl_passes |>
   mutate(
     offense_formation = case_when(
-      offense_formation %in% c("I_FORM", "PISTOL", "JUMBO", "WILDCAT") ~ "Rare Formation",
+      offense_formation %in% c("I_FORM", "PISTOL", "JUMBO", "WILDCAT") 
+      ~ "RARE FORMATION",
       TRUE ~ offense_formation
     ),
     route_type = case_when(
-      route_ran %in% c("SLANT", "FLAT", "SCREEN", "HITCH") ~ "Short",
-      route_ran %in% c("IN", "OUT", "CROSS") ~ "Intermediate",
-      route_ran %in% c("GO", "POST", "CORNER", "WHEEL") ~ "Deep",
-      TRUE ~ "Other"
+      route_ran %in% c("SLANT", "FLAT", "SCREEN", "HITCH") ~ "SHORT",
+      route_ran %in% c("IN", "OUT", "CROSS") ~ "INTERMEDIATE",
+      route_ran %in% c("GO", "POST", "CORNER", "WHEEL") ~ "DEEP",
+      TRUE ~ "OTHER"
     )
   )
 
@@ -885,13 +886,14 @@ tactics_long |>
   ggplot(aes(x = fct_infreq(offensive_tactic), fill = target_player_name)) +
   geom_bar(position = "dodge") +
   labs(
-    title = "Offensive Tactics Used by Top 10 Receivers (by Avg Yards Gained)",
+    title = "Offensive Tactics Used by Top 10 Receivers 
+    (by Avg Yards Gained)",
     x = "Offensive Tactic",
     y = "Count",
     fill = "Player"
   ) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1, size = 8))
+  theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 9))
 
 
 
@@ -928,13 +930,14 @@ tactics_long_ps |>
   ggplot(aes(x = fct_infreq(offensive_tactic), fill = passer_player_name)) +
   geom_bar(position = "dodge") +
   labs(
-    title = "Offensive Tactics Used by Top 10 QBs (by Avg Yards Gained)",
+    title = "Offensive Tactics Used by Top 10 QBs 
+    (by Avg Yards Gained)",
     x = "Offensive Tactic",
     y = "Count",
     fill = "Player"
   ) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1, size = 8))
+  theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 9))
 
 
 
