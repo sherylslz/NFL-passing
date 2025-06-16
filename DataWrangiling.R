@@ -959,32 +959,6 @@ tactics_long_ps |>
     axis.text.y = element_text(face = "bold"))
 
 
-
-#==============================================================================
-route_p_clean |>
-  ggplot(aes(x = completion_percentage,
-             y = reorder(route_ran, completion_percentage))) +
-  geom_col(fill = "navyblue", width = 0.6) +
-  geom_text(aes(label = scales::percent(completion_percentage, accuracy = 0.1)),
-            hjust = 1.1, color = "white", size = 4) +
-  geom_text(aes(label = paste0("n = ", total_passes)),
-            hjust = -0.1, size = 3.5, color = "#333333") +
-  labs(
-    title = "Completion Percentage by Offense Formation",
-    subtitle = "completion rate and total count of pass attempts",
-    x = "Completion Percentage",
-    y = "Offense Formation"
-  ) +
-  scale_x_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0, 1.05)) +
-  theme_minimal(base_size = 13) +
-  theme(
-    plot.title = element_text(face = "bold"),
-    axis.text.y = element_text(face = "bold"),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor = element_blank()
-  )
-
-
 #++++++===================== ELBOW PLOT ========================================
 
 
