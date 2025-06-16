@@ -890,7 +890,7 @@ tactics_long |>
     (by Avg Yards Gained)",
     x = "Offensive Tactic",
     y = "Count",
-    fill = "Player"
+    fill = "Receiver"
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 9))
@@ -934,7 +934,7 @@ tactics_long_ps |>
     (by Avg Yards Gained)",
     x = "Offensive Tactic",
     y = "Count",
-    fill = "Player"
+    fill = "Quarterback"
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 9))
