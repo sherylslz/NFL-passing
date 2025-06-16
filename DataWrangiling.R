@@ -953,7 +953,10 @@ tactics_long_ps |>
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 9)) +
-  scale_fill_viridis_b(option = "Paired")
+  #scale_fill_viridis(option = "Paired") +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_text(face = "bold"))
 
 
 
