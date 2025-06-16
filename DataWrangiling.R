@@ -1000,10 +1000,10 @@ ggplot(avg_yards_by_tactic, aes(x = avg_yards, y = offensive_tactic)) +
   geom_col(position = "dodge", fill = "navyblue") +
   facet_wrap(~ passer_player_name) +
   labs(
-    title = "Top 5 Quarterbacks with the highest Yards Gained",
-    subtitle = "Average Yards Gained by Offensive Tactics",
+    title = "Average Yards Gained by Offensive Tactic",
+    subtitle = "Top 5 quarterbacks with the highest Yards Gained and their chosen tactic",
     x = "Average Yards Gained",
-    y = "Offensive Tactics",
+    y = "Offensive Tactic",
     fill = "Quarterback"
   ) +
   theme_minimal() +
@@ -1011,7 +1011,6 @@ ggplot(avg_yards_by_tactic, aes(x = avg_yards, y = offensive_tactic)) +
         plot.title = element_text(face = "bold"),
         axis.text.y = element_text(face = "bold")
   )
-
 
 
 #++++++===================== ELBOW PLOT ========================================
