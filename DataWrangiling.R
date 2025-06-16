@@ -838,6 +838,51 @@ Teams3 |>
   geom_col(position = "fill")
 
 
+#=-====================== [ CREATING OFFENSIVE TACTICS VARIABLE ]===============
+
+# top ten layers with highest average yards gained
+top10_players <- nfl_passes |>
+  group_by(target_player_name) |>
+  summarize(
+    avg_yards = mean(yards_gained, na.rm = TRUE),
+    n = n()
+  ) |>
+  filter(n >= 20) |>
+  arrange(desc(avg_yards)) |>
+  slice_head(n = 10)
+
+#
+
+top10_data <- nfl_passes |>
+  filter(target_player_name %in% top10_players$target_player_name)
+
+# creating new variable offensive tactics to stack both offense formations and 
+# route type
+tactics_long <- top10_data |>
+  pivot_longer(
+    cols = c(offense_formation, route_ran),
+    names_to = "tactic_type",
+    values_to = "offensive_tactic"
+  )
+
+# creating the plot
+
+tactics_long |>
+  ggplot(aes(x = fct_infreq(offensive_tactic), fill = target_player_name)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Offensive Tactics Used by Top 10 Receivers (by Avg Yards Gained)",
+    x = "Offensive Tactic",
+    y = "Count",
+    fill = "Player"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1, size = 8))
+
+
+
+
+
 
 
 #++++++===================== ELBOW PLOT
@@ -846,3 +891,6 @@ Teams3 |>
 ds_6 |>
   select(std_completion_percentage, std_avg_yards_gained, std_td_per_attempt, std_interception_total) |>
   fviz_nbclust(kmeans, method = "wss")
+
+
+
