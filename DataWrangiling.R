@@ -940,6 +940,15 @@ tactics_long_ps |>
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 9))
 
+# reordering factor levels
+
+tactics_long_ps <- tactics_long_ps |>
+  mutate(
+    offensive_tactic = factor(
+      offensive_tactic,
+      levels = c("RARE FORMATION", "SINGLEBACK", "EMPTY", "SHOTGUN", "OTHER", "DEEP", "INTERMEDIATE", "SHORT")
+    )
+  )
 
 # switched axes
 tactics_long_ps |>
