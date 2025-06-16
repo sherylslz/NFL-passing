@@ -983,7 +983,6 @@ tactics_long_ps |>
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 50, hjust = 1, size = 9),
     plot.title = element_text(face = "bold"),
     axis.text.y = element_text(face = "bold")
   )
@@ -1007,7 +1006,10 @@ ggplot(avg_yards_by_tactic, aes(x = avg_yards, y = offensive_tactic)) +
     fill = "Quarterback"
   ) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+  theme(
+        plot.title = element_text(face = "bold"),
+        axis.text.y = element_text(face = "bold")
+  )
 
 
 
