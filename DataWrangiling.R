@@ -840,8 +840,24 @@ Teams3 |>
 
 #=-====================== [ CREATING OFFENSIVE TACTICS VARIABLE ]===============
 
-# top ten layers with highest average yards gained
-top10_players <- nfl_passes |>
+#grouping routes ran based on general characteristics
+
+nfl_grouped <- nfl_passes |>
+  mutate(
+    offense_formation = case_when(
+      offense_formation %in% c("I_FORM", "PISTOL", "JUMBO", "WILDCAT") ~ "Rare Formation",
+      TRUE ~ offense_formation
+    ),
+    route_type = case_when(
+      route_ran %in% c("SLANT", "FLAT", "SCREEN", "HITCH") ~ "Short",
+      route_ran %in% c("IN", "OUT", "CROSS") ~ "Intermediate",
+      route_ran %in% c("GO", "POST", "CORNER", "WHEEL") ~ "Deep",
+      TRUE ~ "Other"
+    )
+  )
+
+# Top 10 receivers by avg yards
+top10_players <- nfl_grouped |>
   group_by(target_player_name) |>
   summarize(
     avg_yards = mean(yards_gained, na.rm = TRUE),
@@ -851,22 +867,20 @@ top10_players <- nfl_passes |>
   arrange(desc(avg_yards)) |>
   slice_head(n = 10)
 
-#
-
-top10_data <- nfl_passes |>
+# Filter data for top 10 receivers only
+top10_data <- nfl_grouped |>
   filter(target_player_name %in% top10_players$target_player_name)
 
 # creating new variable offensive tactics to stack both offense formations and 
 # route type
 tactics_long <- top10_data |>
   pivot_longer(
-    cols = c(offense_formation, route_ran),
+    cols = c(offense_formation, route_type),
     names_to = "tactic_type",
     values_to = "offensive_tactic"
   )
 
-# creating the plot
-
+# Plot
 tactics_long |>
   ggplot(aes(x = fct_infreq(offensive_tactic), fill = target_player_name)) +
   geom_bar(position = "dodge") +
@@ -878,9 +892,6 @@ tactics_long |>
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1, size = 8))
-
-
-
 
 
 
