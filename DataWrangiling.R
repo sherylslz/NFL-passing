@@ -1,6 +1,7 @@
 library(tidyverse)
 library(kableExtra)
 library(factoextra)
+library(viridis)
 
 
 
@@ -537,10 +538,9 @@ intercepted_pass$target_y <- intercepted_pass$target_y- (53.3/2)
 geom_football("nfl",display_range="in_bounds_only") +
   geom_point(data=completed_pass,x=completed_pass$target_x,y=completed_pass$target_y, colour = "blue")+
   geom_point(data=intercepted_pass,x=intercepted_pass$target_x,y=intercepted_pass$target_y,colour = "red")
-<<<<<<< HEAD
-#>>>>>>> 7ebc262 (Update DataWrangiling.R)
-=======
->>>>>>> fa433d2545ee95ca23f892a86c7dbdb8d62ab807
+
+#>>>>>>>  (Update DataWrangiling.R)
+
 
 
 ##Cluster data set 
@@ -573,11 +573,7 @@ left_join(cluster_data, ds_7, by = "avg_yards_gained")
                                label = passer_player_name)) + 
   geom_point(size = 5) + 
   geom_text(hjust=0, vjust=0)
- 
-<<<<<<< HEAD
-#<<<<<<< HEAD
-=======
->>>>>>> fa433d2545ee95ca23f892a86c7dbdb8d62ab807
+
 
 ##Gradient Joint Distribution Graph 
  
@@ -788,11 +784,7 @@ Teams3 %>%
   geom_bar() +
   facet_wrap(~ offense_formation)
 
-<<<<<<< HEAD
-#<<<<<<< HEAD
-=======
 
->>>>>>> fa433d2545ee95ca23f892a86c7dbdb8d62ab807
 nfl_passes |> 
   filter(offense_formation %in% c("EMPTY", "I_FORM", "JUMBO", "PISTOL", "SHOTGUN", "SINGLEBACK")) |>
   ggplot(aes(x = yards_gained, color = offense_formation)) +
@@ -825,7 +817,7 @@ nfl_passes |>
   ggplot() +
   geom_mosaic(aes(x=product(offense_formation, route_ran), fill = offense_formation))
 
-<<<<<<< HEAD
+
 nfl_passes %>%
   ggplot(aes(x = offense_formation, fill = complete_pass)) + 
   geom_bar()+
@@ -860,11 +852,186 @@ Teams3 |>
   geom_col(position = "fill")
 
 
+#====[CREATING OFFENSIVE TACTICS VARIABLE for target player (receiver)] based on yards=
+
+# grouping routes ran based on general characteristics
+
+nfl_grouped <- nfl_passes |>
+  mutate(
+    offense_formation = case_when(
+      offense_formation %in% c("I_FORM", "PISTOL", "JUMBO", "WILDCAT") 
+      ~ "RARE FORMATION",
+      TRUE ~ offense_formation
+    ),
+    route_type = case_when(
+      route_ran %in% c("SLANT", "FLAT", "SCREEN", "HITCH") ~ "SHORT",
+      route_ran %in% c("IN", "OUT", "CROSS") ~ "INTERMEDIATE",
+      route_ran %in% c("GO", "POST", "CORNER", "WHEEL") ~ "DEEP",
+      TRUE ~ "OTHER"
+    )
+  )
+
+# Top 5 receivers by avg yards
+top10_players <- nfl_grouped |>
+  group_by(target_player_name) |>
+  summarize(
+    avg_yards = mean(yards_gained, na.rm = TRUE),
+    n = n()
+  ) |>
+  filter(n >= 20) |>
+  arrange(desc(avg_yards)) |>
+  slice_head(n = 5)
+
+# Filter data for top 10 receivers only
+top10_data <- nfl_grouped |>
+  filter(target_player_name %in% top10_players$target_player_name)
+
+# creating new variable offensive tactics to stack both offense formations and 
+# route type
+tactics_long <- top10_data |>
+  pivot_longer(
+    cols = c(offense_formation, route_type),
+    names_to = "tactic_type",
+    values_to = "offensive_tactic"
+  )
+
+# Plot
+tactics_long |>
+  ggplot(aes(x = fct_infreq(offensive_tactic), fill = target_player_name)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Offensive Tactics Used by Top 10 Receivers 
+    (by Avg Yards Gained)",
+    x = "Offensive Tactic",
+    y = "Count",
+    fill = "Receiver"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 9))
 
 
-#++++++===================== ELBOW PLOT
+
+
+
+#===[CREATING OFFENSIVE TACTICS VARIABLE for passer player (QB) based on yards]=
+
+# Top 5 receivers by avg yards
+top10_passers <- nfl_grouped |>
+  group_by(passer_player_name) |>
+  summarize(
+    avg_yards = mean(yards_gained, na.rm = TRUE),
+    n = n()
+  ) |>
+  filter(n >= 100) |>
+  arrange(desc(avg_yards)) |>
+  slice_head(n = 5)
+
+# Filter data for top 10 QBs only
+top10_ds <- nfl_grouped |>
+  filter(passer_player_name %in% top10_passers$passer_player_name)
+
+# creating new variable offensive tactics to stack both offense formations and 
+# route type
+tactics_long_ps <- top10_ds |>
+  pivot_longer(
+    cols = c(offense_formation, route_type),
+    names_to = "tactic_type",
+    values_to = "offensive_tactic"
+  )
+
+# Plot
+tactics_long_ps |>
+  ggplot(aes(x = fct_infreq(offensive_tactic), fill = passer_player_name)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Offensive Tactics Used by Top 10 QBs 
+    (by Avg Yards Gained)",
+    x = "Offensive Tactic",
+    y = "Count",
+    fill = "Quarterback"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 9))
+
+# reordering factor levels
+
+tactics_long_ps <- tactics_long_ps |>
+  mutate(
+    offensive_tactic = factor(
+      offensive_tactic,
+      levels = c("RARE FORMATION", "SINGLEBACK", "EMPTY", "SHOTGUN", "OTHER", "DEEP", "INTERMEDIATE", "SHORT")
+    )
+  )
+
+# switched axes
+
+tactics_long_ps |>
+  ggplot(aes(y = offensive_tactic, fill = passer_player_name)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Offensive Tactics Used by Top 10 QBs (by Avg Yards Gained)",
+    x = "Count",
+    y = "Offensive Tactic",
+    fill = "Quarterback"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 9)) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_text(face = "bold"))
+
+# faceted charts
+# NOTE: plot shows how many pass attempts fall into each offensive tactic level  
+# for each of these five players-- It shows the frequency of attempts by tactic.
+
+
+tactics_long_ps |>
+  ggplot(aes(y = offensive_tactic)) +  # no fill or use a neutral color
+  geom_bar(fill = "navyblue") +
+  facet_wrap(~ passer_player_name) +
+  labs(
+    title = "Offensive Tactics Used by Top 10 QBs (by Avg Yards Gained)",
+    x = "Count",
+    y = "Offensive Tactic"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_text(face = "bold")
+  )
+
+# plot shows average yards by tactic for those top players:
+# how effective were these offense tactics to gain the average yards that these 
+# top players gained
+
+avg_yards_by_tactic <- tactics_long_ps |>
+  filter(passer_player_name %in% top10_passers$passer_player_name) |>
+  group_by(passer_player_name, offensive_tactic) |>
+  summarize(avg_yards = mean(yards_gained, na.rm = TRUE), .groups = "drop")
+
+ggplot(avg_yards_by_tactic, aes(x = avg_yards, y = offensive_tactic)) +
+  geom_col(position = "dodge", fill = "navyblue") +
+  facet_wrap(~ passer_player_name) +
+  labs(
+    title = "Average Yards Gained by Offensive Tactic",
+    subtitle = "Top 5 quarterbacks with the highest Yards Gained and their chosen tactic",
+    x = "Average Yards Gained",
+    y = "Offensive Tactic",
+    fill = "Quarterback"
+  ) +
+  theme_minimal() +
+  theme(
+        plot.title = element_text(face = "bold"),
+        axis.text.y = element_text(face = "bold")
+  )
+
+
+#++++++===================== ELBOW PLOT ========================================
 
 
 ds_6 |>
   select(std_completion_percentage, std_avg_yards_gained, std_td_per_attempt, std_interception_total) |>
   fviz_nbclust(kmeans, method = "wss")
+
+
+
