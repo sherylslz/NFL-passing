@@ -909,7 +909,7 @@ top10_passers <- nfl_grouped |>
     avg_yards = mean(yards_gained, na.rm = TRUE),
     n = n()
   ) |>
-  filter(n >= 20) |>
+  filter(n >= 100) |>
   arrange(desc(avg_yards)) |>
   slice_head(n = 5)
 
@@ -998,11 +998,12 @@ avg_yards_by_tactic <- tactics_long_ps |>
 
 ggplot(avg_yards_by_tactic, aes(x = avg_yards, y = offensive_tactic)) +
   geom_col(position = "dodge", fill = "navyblue") +
-  facet_wrap(~ passer_player_name)
+  facet_wrap(~ passer_player_name) +
   labs(
-    title = "Average Yards Gained by Offensive Tactic for Top Passers",
-    x = "Offensive Tactic",
-    y = "Average Yards",
+    title = "Top 5 Quarterbacks with the highest Yards Gained",
+    subtitle = "Average Yards Gained by Offensive Tactics",
+    x = "Average Yards Gained",
+    y = "Offensive Tactics",
     fill = "Quarterback"
   ) +
   theme_minimal() +
