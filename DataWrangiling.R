@@ -856,7 +856,7 @@ nfl_grouped <- nfl_passes |>
     )
   )
 
-# Top 10 receivers by avg yards
+# Top 5 receivers by avg yards
 top10_players <- nfl_grouped |>
   group_by(target_player_name) |>
   summarize(
@@ -865,7 +865,7 @@ top10_players <- nfl_grouped |>
   ) |>
   filter(n >= 20) |>
   arrange(desc(avg_yards)) |>
-  slice_head(n = 10)
+  slice_head(n = 5)
 
 # Filter data for top 10 receivers only
 top10_data <- nfl_grouped |>
@@ -899,7 +899,7 @@ tactics_long |>
 
 #===[CREATING OFFENSIVE TACTICS VARIABLE for passer player (QB) based on yards]=
 
-# Top 10 receivers by avg yards
+# Top 5 receivers by avg yards
 top10_passers <- nfl_grouped |>
   group_by(passer_player_name) |>
   summarize(
@@ -908,11 +908,11 @@ top10_passers <- nfl_grouped |>
   ) |>
   filter(n >= 20) |>
   arrange(desc(avg_yards)) |>
-  slice_head(n = 10)
+  slice_head(n = 5)
 
-# Filter data for top 10 receivers only
+# Filter data for top 10 QBs only
 top10_ds <- nfl_grouped |>
-  filter(passer_player_name %in% top10_players$passer_player_name)
+  filter(passer_player_name %in% top10_passers$passer_player_name)
 
 # creating new variable offensive tactics to stack both offense formations and 
 # route type
@@ -924,11 +924,11 @@ tactics_long_ps <- top10_ds |>
   )
 
 # Plot
-tactics_long |>
+tactics_long_ps |>
   ggplot(aes(x = fct_infreq(offensive_tactic), fill = passer_player_name)) +
   geom_bar(position = "dodge") +
   labs(
-    title = "Offensive Tactics Used by Top 10 Receivers (by Avg Yards Gained)",
+    title = "Offensive Tactics Used by Top 10 QBs (by Avg Yards Gained)",
     x = "Offensive Tactic",
     y = "Count",
     fill = "Player"
