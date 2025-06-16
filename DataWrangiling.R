@@ -838,9 +838,9 @@ Teams3 |>
   geom_col(position = "fill")
 
 
-#=-====================== [ CREATING OFFENSIVE TACTICS VARIABLE ]===============
+#====[CREATING OFFENSIVE TACTICS VARIABLE for target player (receiver)] based on yards=
 
-#grouping routes ran based on general characteristics
+# grouping routes ran based on general characteristics
 
 nfl_grouped <- nfl_passes |>
   mutate(
@@ -896,7 +896,51 @@ tactics_long |>
 
 
 
-#++++++===================== ELBOW PLOT
+
+#===[CREATING OFFENSIVE TACTICS VARIABLE for passer player (QB) based on yards]=
+
+# Top 10 receivers by avg yards
+top10_passers <- nfl_grouped |>
+  group_by(passer_player_name) |>
+  summarize(
+    avg_yards = mean(yards_gained, na.rm = TRUE),
+    n = n()
+  ) |>
+  filter(n >= 20) |>
+  arrange(desc(avg_yards)) |>
+  slice_head(n = 10)
+
+# Filter data for top 10 receivers only
+top10_ds <- nfl_grouped |>
+  filter(passer_player_name %in% top10_players$passer_player_name)
+
+# creating new variable offensive tactics to stack both offense formations and 
+# route type
+tactics_long_ps <- top10_ds |>
+  pivot_longer(
+    cols = c(offense_formation, route_type),
+    names_to = "tactic_type",
+    values_to = "offensive_tactic"
+  )
+
+# Plot
+tactics_long |>
+  ggplot(aes(x = fct_infreq(offensive_tactic), fill = passer_player_name)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Offensive Tactics Used by Top 10 Receivers (by Avg Yards Gained)",
+    x = "Offensive Tactic",
+    y = "Count",
+    fill = "Player"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1, size = 8))
+
+
+
+
+
+#++++++===================== ELBOW PLOT ========================================
 
 
 ds_6 |>
