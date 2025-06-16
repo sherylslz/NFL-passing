@@ -951,6 +951,7 @@ tactics_long_ps <- tactics_long_ps |>
   )
 
 # switched axes
+
 tactics_long_ps |>
   ggplot(aes(y = offensive_tactic, fill = passer_player_name)) +
   geom_bar(position = "dodge") +
@@ -962,10 +963,52 @@ tactics_long_ps |>
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 9)) +
-  #scale_fill_viridis(option = "Paired") +
   theme(
     plot.title = element_text(face = "bold"),
     axis.text.y = element_text(face = "bold"))
+
+# faceted charts
+# NOTE: plot shows how many pass attempts fall into each offensive tactic level  
+# for each of these five players-- It shows the frequency of attempts by tactic.
+
+
+tactics_long_ps |>
+  ggplot(aes(y = offensive_tactic)) +  # no fill or use a neutral color
+  geom_bar(fill = "navyblue") +
+  facet_wrap(~ passer_player_name) +
+  labs(
+    title = "Offensive Tactics Used by Top 10 QBs (by Avg Yards Gained)",
+    x = "Count",
+    y = "Offensive Tactic"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 50, hjust = 1, size = 9),
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_text(face = "bold")
+  )
+
+# plot shows average yards by tactic for those top players:
+# how effective were these offense tactics to gain the average yards that these 
+# top players gained
+
+avg_yards_by_tactic <- tactics_long_ps |>
+  filter(passer_player_name %in% top10_passers$passer_player_name) |>
+  group_by(passer_player_name, offensive_tactic) |>
+  summarize(avg_yards = mean(yards_gained, na.rm = TRUE), .groups = "drop")
+
+ggplot(avg_yards_by_tactic, aes(x = avg_yards, y = offensive_tactic)) +
+  geom_col(position = "dodge", fill = "navyblue") +
+  facet_wrap(~ passer_player_name)
+  labs(
+    title = "Average Yards Gained by Offensive Tactic for Top Passers",
+    x = "Offensive Tactic",
+    y = "Average Yards",
+    fill = "Quarterback"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
 
 
 #++++++===================== ELBOW PLOT ========================================
