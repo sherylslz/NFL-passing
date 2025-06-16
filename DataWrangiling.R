@@ -612,6 +612,9 @@ scale_fill_gradient2()
 
 ##Avg yards formation and Route gradient with grouping
 
+pony <- pony |>
+  mutate(route_type = factor (route_type, 
+                               levels = c("Deep", "Intermediate", "Short", "Other")))
 pony |> 
   group_by(formation_type, route_type) |>
   summarize(
@@ -619,8 +622,18 @@ pony |>
   ) |> 
   ggplot(aes(x = formation_type, y = route_type)) +
   geom_tile(aes(fill = freq), color = "white") +
-  geom_text(aes(label = freq))
-scale_fill_gradient2()
+geom_text(aes(label = round(freq, 2))) +
+scale_fill_gradient2()+
+  labs(
+    title = "Average Yards Gained by Formation and Route",
+    x = "Formation Type",
+    y = "Route Type"
+  ) +
+  theme_minimal() +
+  theme( plot.title = element_text(face="bold"),
+  axis.text.y = element_text(face = "bold"),
+  axis.text.x = element_text(face = "bold"))
+
 
 
 ##Gradient without grouping
