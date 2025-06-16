@@ -943,7 +943,7 @@ tactics_long_ps |>
 
 # switched axes
 tactics_long_ps |>
-  ggplot(aes(y = fct_infreq(offensive_tactic), fill = passer_player_name)) +
+  ggplot(aes(y = offensive_tactic, fill = passer_player_name)) +
   geom_bar(position = "dodge") +
   labs(
     title = "Offensive Tactics Used by Top 10 QBs (by Avg Yards Gained)",
